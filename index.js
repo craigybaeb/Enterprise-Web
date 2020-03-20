@@ -3,6 +3,39 @@ const storage = require('azure-storage');
 const connectionString = 'DefaultEndpointsProtocol=https;AccountName=enterpriseface;AccountKey=TljXRnTsV3zc1YbD2oLvsC3co/zdLQNpwWyII65EVCSoNoOTyQ7y7wtJVJKBHgw01NnY3IcD5kbJ6U1nweYgjw==;EndpointSuffix=core.windows.net';
 const express = require('express');
 const app = express();
+const RateLimit = require('express-rate-limit');
+var cookieParser = require('cookie-parser');
+var session = require('express-session')({
+  secret: "Shh, its a secret!",
+  httpOnly: true,
+  resave: true,
+  saveUninitialized: true,
+  rolling : true,
+  cookie: {maxAge : 5 * 60 * 1000}
+  });
+var sharedsession = require("express-socket.io-session");
+app.use(cookieParser());
+app.use(session);
+const { check, validationResult } = require('express-validator');
+var helmet = require('helmet');
+app.use(helmet());
+
+app.enable('trust proxy'); // only if you're behind a reverse proxy (Heroku, Bluemix, AWS if you use an ELB, custom Nginx setup, etc)
+
+const createAccountLimiter = new RateLimit({
+  windowMs: 60*60*1000, // 1 hour window
+  max: 5, // start blocking after 5 requests
+  message: "Too many accounts created from this IP, please try again after an hour"
+});
+
+const dayLimiter = new RateLimit({
+  windowMs: 60*60*1000*24, // 1 hour window
+  max: 100, // start blocking after 5 requests
+  message: "Too many accounts created from this IP, please try again after an hour"
+});
+
+app.use(dayLimiter)
+
 app.set('/views', __dirname + '/views');
 app.use(express.static(__dirname + '/public'));
 app.set('view engine', 'ejs');
@@ -27,14 +60,22 @@ var taskDao = new TaskDao(docDbClient, config.databaseId, config.collectionId);
 var taskDaoMessages = new TaskDao(docDbClient, config.databaseId, "messages");
 var taskList = new TaskList(taskDao);
 var taskListMessages = new TaskList(taskDaoMessages);
+var taskDaoRooms = new TaskDao(docDbClient, config.databaseId, "rooms");
 
 taskDao.init();
-
+taskDaoRooms.init();
 taskDaoMessages.init();
 
-app.get('/', function(req, res) {
+app.get('/', isLoggedIn, function(req, res) {
+  var querySpec = {
+      query: 'SELECT * FROM c'
+  };
 
-    res.render('pages/index');
+   taskDaoRooms.find(querySpec, function (err, items) {
+      res.render('pages/index', {rooms:items});
+})
+
+
 
 });
 // index page
@@ -48,11 +89,16 @@ app.get('/login', function(req, res) {
 app.get('/addroom', function(req, res) {
     res.render('pages/addroom');
 });
-app.post('/register', function(req,res){
+app.post('/register', [
+  check('username').isLength({ min: 3, max: 15 }).withMessage('Username must be between 3-15 characters long!'),
+  check('password').isLength({ min: 6, max: 15 }).withMessage('Password must be between 6-15 characters long!')],
+    function(req,res){
+      const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
   const username = req.body.username;
   const password = req.body.password;
-  console.log(username);
-  console.log(password);
   const hash = passwordHash.generate(password);
   var item = {username:username, password:hash}
 
@@ -60,6 +106,7 @@ app.post('/register', function(req,res){
       if (err) {
           res.send({msg:err});
       }
+      req.session.username = username;
       res.status(201).send({msg:"Register success!"});
   });
 });
@@ -71,10 +118,23 @@ app.post('/addroom', function(req,res){
   taskDaoRooms.addItem(item, function (err) {
       if (err) {
           res.send({msg:err});
+      }else{
+        res.status(201).send({msg:"Room added!"});
       }
-      res.status(201).send({msg:"Room added!"});
+
   });
 });
+
+async function getRooms(){
+  var querySpec = {
+      query: 'SELECT * FROM c'
+  };
+  var ritems;
+  await taskDaoRooms.find(querySpec, function (err, items) {
+      ritems = items;
+})
+return ritems;
+}
 
 function saveMessage(sender, room, message){
   var item = {sender:sender, room:room, message:message}
@@ -82,6 +142,14 @@ function saveMessage(sender, room, message){
   taskDaoMessages.addItem(item, function (err) {
 
   });
+}
+
+function isLoggedIn(req, res, next){
+  if(req.session.username){
+    next()
+  }else{
+    res.status(403).redirect("/login")
+  }
 }
 
 app.post('/savedMessages', function(req,res){
@@ -99,7 +167,12 @@ app.post('/savedMessages', function(req,res){
 
 
 })
-app.post('/login', function(req,res){
+
+app.post('/logout', function(req,res){
+  req.session.destroy();
+  res.status(200).send();
+})
+app.post('/login', createAccountLimiter, function(req,res){
   const username = req.body.username;
   const password = req.body.password;
   var querySpec = {
@@ -116,6 +189,7 @@ app.post('/login', function(req,res){
       }
 
       if(passwordHash.verify(password, items[0].password)){
+        req.session.username = username;
         res.send({match: true, msg:"Login success!"});
       }else{
         res.send({match: false, msg:"Password does not match the one stored for this user!"});
@@ -123,12 +197,13 @@ app.post('/login', function(req,res){
 
   });
 });
-
+io.use(sharedsession(session, {
+    autoSave:true
+}));
 io.sockets.on('connection', function(socket) {
-    socket.on('username', async function(username, room) {
-        socket.username = username;
+    socket.on('username', async function(room) {
+        socket.username = socket.handshake.session.username;
         socket.room = room;
-        io.emit('is_online', '🔵 <i>' + socket.username + ' join the chat..</i>');
         socket.join(room);
         console.log(room, username);
         //Send this event to everyone in the room.

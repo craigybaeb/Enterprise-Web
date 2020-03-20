@@ -1,5 +1,5 @@
 $(document).ready(function(){
-  var socket = io.connect();
+  var socket = io.connect("http://localhost:8080");
   // submit text message without reload/refresh the page
   $('form').submit(function(e){
       e.preventDefault(); // prevents page reloading
@@ -18,7 +18,8 @@ $(document).ready(function(){
 
   // append text if someone is online
   socket.on('saved_messages', function(messages) {
-    console.log(messages)
+    $('#messages').empty();
+    $('#messages').append($('<li>').html(msg));
   });
 
   socket.on('joined_room', function(message) {
@@ -33,39 +34,45 @@ $(document).ready(function(){
       room: room
     },function(messages){
       console.log(messages)
+      $('#messages').empty();
       messages.forEach(function(message){
         $('#messages').append($('<li>').html('<strong>' + message.sender + '</strong>: ' + message.message));
       })
+      socket.emit('username', room);
     })
-    socket.emit('username', "Craigy", room);
+
 
     }
 
-
-  $('#hci').click(function(){
-    joinRoom("Human Computer Interaction")
+  $('.room').each(function(){
+    var thisroom = $(this).html();
+    $(this).click(function(){
+      joinRoom(thisroom);
+    })
   })
 
-  $('#enterprise').click(function(){
-    joinRoom("Enterprise Web")
-  })
 
-  $('#webSec').click(function(){
-    joinRoom("Web Security")
-  })
 
 $('#login-btn').click(function(){
-    $.post('/login', {
-      username : $('#username').val(),
-      password : $('#password').val()
-    }, function(data){
-      $('#msg').html(data.msg)
-      if(data.match){
-        $.get('/');
-      }
-    });
-
-  });
+    $.ajax('/login', {
+   type: "POST",
+   data: {
+     username : $('#username').val(),
+     password : $('#password').val()
+   },
+   statusCode: {
+      200: function (data) {
+        $('#msg').html(data.msg)
+        if(data.match){
+          window.location.replace("/")
+        }
+      },
+      429: function (response) {
+        $('#msg').html(response.responseText);
+            }
+   }
+ });
+});
 
   $('#register-btn').click(function(){
       $.post('/register', {
@@ -78,9 +85,17 @@ $('#login-btn').click(function(){
 
     $('#addroom-btn').click(function(){
         $.post('/addroom', {
-          room : $('#addroom').val()
+          username : $('#username').val()
         }, function(data){
 
         });
       });
+
+      $('#logout').click(function(){
+        $.post('/logout', function(){
+            window.location.replace("/login")
+
+        })
+
+        });
 })

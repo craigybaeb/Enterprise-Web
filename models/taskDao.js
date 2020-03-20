@@ -36,7 +36,7 @@ TaskDao.prototype = {
     find: function (querySpec, callback) {
         var self = this;
 
-        self.client.queryDocuments(self.collection._self, querySpec).toArray(function (err, results) {
+        self.client.queryDocuments(self.collection._self, querySpec, { enableCrossPartitionQuery: true }).toArray(function (err, results) {
             if (err) {
                 callback(err);
 
