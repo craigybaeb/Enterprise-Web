@@ -259,6 +259,7 @@ io.sockets.on('connection', function(socket) {
 
     socket.on('chat_message', function(message) {
         saveMessage(socket.username, socket.room, message);
+
         io.sockets.in(socket.room).emit('chat_message', {username:socket.username, msg:message});
 
     });
