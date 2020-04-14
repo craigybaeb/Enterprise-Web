@@ -1,15 +1,44 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Login</title>
-    <script src="https://code.jquery.com/jquery-1.10.1.min.js"></script>
-    <script src="scripts2.js"></script>
-  </head>
-  <body>
-    Username: <input id="username"></input>
-    Password: <input id="password" type="password"></input>
-    <button id='login-btn'>Login</button>
-    <p id="show">Show Password</p>
-    <p id="msg"></p>
-  </body>
+<head>
+	<script src="../../socket.io/socket.io.js"></script>
+	<script src="https://code.jquery.com/jquery-1.10.1.min.js"></script>
+	<script src="scripts.js"></script>
+	<link rel="icon" href="favicon-32x32.png">
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="nustyle.css">
+	<title>LectureChat - Login</title>
+</head>
+<body>
+
+<div class="flex-container header">
+  <div id="logo">LectureChat</div>
+
+	<div id="links">
+  <div><a href="/about">About</a></div>
+	</div>
+</div>
+<div class=main_join>
+<div class="join_box">
+<div class="jbox">
+	<p>Login</p>
+	<div id="join_container">
+		<form>
+		<label>Username: </label><input autofocus="on" id="username">
+		<div class="password-container"><label>Password: </label><input type="password" id="password"></form>
+				<img src="visibility-24px.svg" id="show">
+			</div>
+			<br>
+	<div id="login-btn">Login</div>
+
+
+	<p id="msg"></p>
+	<p>Don't have an account? <a href="/register">Register</a>  here. </p>
+
+</div>
+</div>
+</div>
+</div>
+
+</body>
 </html>

@@ -16,9 +16,18 @@ var session = require('express-session')({
 var sharedsession = require("express-socket.io-session");
 app.use(cookieParser());
 app.use(session);
+app.disable('x-powered-by');
 const { check, validationResult } = require('express-validator');
-var helmet = require('helmet');
-app.use(helmet());
+//var helmet = require('helmet');
+//app.use(helmet.contentSecurityPolicy({
+//   directives: {
+//     defaultSrc: ["'self'"],
+//     scriptSrc: ["'self'", 'https://code.jquery.com'],
+//     styleSrc: ["'self'", 'https://fonts.googleapis.com'],
+//     fontSrc: ['https://fonts.gstatic.com'],
+//
+//   }
+// }))
 
 app.enable('trust proxy'); // only if you're behind a reverse proxy (Heroku, Bluemix, AWS if you use an ELB, custom Nginx setup, etc)
 
@@ -43,9 +52,10 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({
   extended: true
 }))
-
+app.use(express.urlencoded())
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
+app.io = io;
 const passwordHash = require('password-hash')
 var config = require('./config');
 var TaskList = require('./routes/tasklist');
@@ -72,7 +82,7 @@ app.get('/', isLoggedIn, function(req, res) {
   };
 
    taskDaoRooms.find(querySpec, function (err, items) {
-      res.render('pages/index', {rooms:items});
+      res.render('pages/join');
 })
 
 
@@ -157,15 +167,24 @@ app.post('/savedMessages', function(req,res){
       query: 'SELECT * FROM c WHERE c.room=@room',
       parameters: [{
           name: '@room',
-          value: req.body.room
+          value: req.session.room
       }]
   };
 
   taskDaoMessages.find(querySpec, function (err, items) {
-    res.send(items);
+    res.send({username:req.session.username, messages:items});
   });
 
 
+})
+
+app.post('/chat', function(req,res){
+  req.session.room = req.body.room;
+  res.render('pages/main')
+})
+
+app.get('/about', function(req,res){
+  res.render('pages/about')
 })
 
 app.post('/logout', function(req,res){
@@ -200,23 +219,47 @@ app.post('/login', createAccountLimiter, function(req,res){
 io.use(sharedsession(session, {
     autoSave:true
 }));
+const users = {};
+var count = 0;
 io.sockets.on('connection', function(socket) {
-    socket.on('username', async function(room) {
+    socket.on('username', async function() {
+
+
         socket.username = socket.handshake.session.username;
-        socket.room = room;
-        socket.join(room);
-        console.log(room, username);
+        socket.room = socket.handshake.session.room;
+        console.log("ROOM" + socket.room)
+        socket.join(socket.room);
+        users[socket.id] = socket.username;
+        count++;
+        console.log(users);
+        console.log(count);
         //Send this event to everyone in the room.
-        io.sockets.in(room).emit('joined_room', socket.username + " joined " + room);
+        io.sockets.in(socket.room).emit('online', count, Object.values(users));
+          //io.sockets.in(room).emit('whos_online', io.sockets.clients(room))
     });
 
     socket.on('disconnect', function(username) {
         io.emit('is_online', '🔴 <i>' + socket.username + ' left the chat..</i>');
+        delete users[socket.id];
+
+        console.log(count);console.log(users);
+
+
+        //io.sockets.in(socket.room).emit('whos_online', io.sockets.clients(socket.room))
+    })
+
+    socket.on('left', function() {
+        socket.leave(socket.handshake.session.room);
+        delete users[socket.id];
+        count--;
+        console.log(count);console.log(users);
+        io.sockets.in(socket.handshake.session.room).emit('online', count, Object.values(users));
+        socket.handshake.session.room = "";
     })
 
     socket.on('chat_message', function(message) {
         saveMessage(socket.username, socket.room, message);
-        io.sockets.in(socket.room).emit('chat_message', '<strong>' + socket.username + '</strong>: ' + message);
+        io.sockets.in(socket.room).emit('chat_message', {username:socket.username, msg:message});
 
     });
 

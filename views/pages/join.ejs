@@ -7,7 +7,7 @@
 	<link rel="icon" href="favicon-32x32.png">
 	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href="nustyle.css">
-	<title>LectureChat - Register</title>
+	<title>LectureChat - Join A Room</title>
 </head>
 <body>
 
@@ -16,23 +16,18 @@
 
 	<div id="links">
   <div><a href="/about">About</a></div>
+  <div><a href="#">Logout</a></div>
 	</div>
 </div>
 <div class=main_join>
 <div class="join_box">
 <div class="jbox">
-	<p>Register</p>
+	<p>Join a room!</p>
 	<div id="join_container">
-		<form id="reg-form">
-		<label>Username: </label><input autofocus="on" id="username">
-		<div class="password-container"><label>Password: </label><input type="password" id="password"><img src="visibility-24px.svg" id="show"></div>
-		<div class="password-container"><label>Confirm Password: </label><input type="password" id="confirm">	<img src="visibility-24px.svg" id="show-confirm"></div>
-	</form>
-		<br>
-	<div id="register-btn">Register</div>
-	<p id="msg"></p>
-	<p>Already have an account? <a href="/login">Login</a> here.</p>
-
+		<form id="jform" action="/chat" method="post" >
+		<input name="room"id="join-input" type="text">
+	</form >
+	<div id="join-btn">Join</div>
 </div>
 </div>
 </div>

@@ -56,14 +56,17 @@ $('#temp').click(function(){
 joinRoom();
 
 })
-
+var segment_str = window.location.pathname; // return segment1/segment2/segment3/segment4
+var segment_array = segment_str.split( '/' );
+var last_segment = segment_array.pop();
+joinRoom(last_segment)
 $('#leave').click(function(){
 socket.emit('left', "Enterprise Web");
 
 })
-  function joinRoom(){
+  function joinRoom(room){
     $.post("/savedMessages", {
-      room: "Enterprise Web"
+      room: room
     },function(data){
       $('.main').empty();
       data.messages.forEach(function(message){
@@ -80,14 +83,14 @@ socket.emit('left', "Enterprise Web");
         </div>`);
       }
       })
-      socket.emit('username');
+      socket.emit('username', room);
     })
 
 
     }
     $('#join-btn').click(function(){
-      $('#jform').submit()
-
+      const room = $('#join-input').val();
+      window.location.replace("/chat/"+room)
     })
 
   $('.room').each(function(){
@@ -189,11 +192,9 @@ function checkReg(username, pword, confirm){
         });
 
         $('#change').click(function(){
-          $.post('/logout', function(){
-              window.location.replace("/login")
 
-          })
-
+          socket.emit('left');
+          window.location.replace("/")
           });
 
 
