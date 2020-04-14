@@ -1,5 +1,5 @@
 $(document).ready(function(){
-  var socket = io.connect("http://localhost:8080");
+  var socket = io.connect();
   // submit text message without reload/refresh the page
   $('#send').click(function(){
       const message = $('#chatbox').val();
