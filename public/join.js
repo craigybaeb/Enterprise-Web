@@ -10,7 +10,7 @@ $(document).ready(function(){
   });
   // append the chat text message
   socket.on('chat_message', function(msg){
-    alert("name"+name+"user"+msg.username)
+
     if(name==msg.username){
       $('.main').append(`<div class="message_box">
       <div class="my">
