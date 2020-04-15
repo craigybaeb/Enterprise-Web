@@ -82,7 +82,8 @@ app.get('/', isLoggedIn, function(req, res) {
   };
 
    taskDaoRooms.find(querySpec, function (err, items) {
-      res.render('pages/join');
+     console.log(items[0])
+      res.render('pages/join', {rooms:items});
 })
 
 
@@ -99,6 +100,44 @@ app.get('/login', function(req, res) {
 app.get('/addroom', function(req, res) {
     res.render('pages/addroom');
 });
+
+app.get('/delete', function(req, res) {
+    res.render('pages/delete');
+});
+
+app.post('/delete', function(req, res) {
+  var querySpec = {
+      query: 'SELECT * FROM c WHERE c.room=@room',
+      parameters: [{
+          name: '@room',
+          value: req.body.room
+      }]
+  };
+
+
+      taskDaoRooms.deleteItem(querySpec, function(err, replaced){
+        console.log(err)
+      })
+
+
+    res.send({msg:"Success"});
+});
+app.get('/privilege', isLoggedIn, isMaster, function(req,res){
+  res.render('pages/escalate')
+})
+app.post('/privilege', function(req,res){
+  var querySpec = {
+      query: 'SELECT * FROM c WHERE c.username=@username',
+      parameters: [{
+          name: '@username',
+          value: req.body.username
+      }]
+  };
+
+  taskDao.updateItem(querySpec, req.body.priv,function (err, items) {
+    res.send({msg: "Updated"});
+  });
+})
 app.post('/register', [
   check('username').isLength({ min: 3, max: 15 }).withMessage('Username must be between 3-15 characters long!'),
   check('password').isLength({ min: 6, max: 15 }).withMessage('Password must be between 6-15 characters long!')],
@@ -110,7 +149,7 @@ app.post('/register', [
   const username = req.body.username;
   const password = req.body.password;
   const hash = passwordHash.generate(password);
-  var item = {username:username, password:hash}
+  var item = {username:username, password:hash, priv:1}
 
   taskDao.addItem(item, function (err) {
       if (err) {
@@ -161,6 +200,13 @@ function isLoggedIn(req, res, next){
     res.status(403).redirect("/login")
   }
 }
+function isMaster(req,res,next){
+  if(req.session.priv == 3){
+    next()
+  }else{
+    res.status(403).redirect("/")
+  }
+}
 
 app.post('/savedMessages', function(req,res){
   var querySpec = {
@@ -180,7 +226,7 @@ app.post('/savedMessages', function(req,res){
 
 app.post('/chat', function(req,res){
   req.session.room = req.body.room;
-  res.render('pages/main')
+  res.render('pages/main', {room:req.body.room})
 })
 
 app.get('/about', function(req,res){
@@ -209,6 +255,7 @@ app.post('/login', createAccountLimiter, function(req,res){
 
       if(passwordHash.verify(password, items[0].password)){
         req.session.username = username;
+        req.session.priv = items[0].priv;
         res.send({match: true, msg:"Login success!"});
       }else{
         res.send({match: false, msg:"Password does not match the one stored for this user!"});

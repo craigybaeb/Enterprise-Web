@@ -59,17 +59,17 @@ TaskDao.prototype = {
         });
     },
 
-    updateItem: function (itemId, callback) {
+    updateItem: function (querySpec, priv, callback) {
         var self = this;
-
-        self.getItem(itemId, function (err, doc) {
+        self.client.queryDocuments(self.collection._self, querySpec, { enableCrossPartitionQuery: true }).toArray(function (err, results) {
             if (err) {
                 callback(err);
 
             } else {
-                doc.completed = true;
+              console.log("££££" + results)
+                results[0].priv = priv;
 
-                self.client.replaceDocument(doc._self, doc, function (err, replaced) {
+                self.client.replaceDocument(results[0]._self, results[0], function (err, replaced) {
                     if (err) {
                         callback(err);
 
@@ -100,5 +100,27 @@ TaskDao.prototype = {
                 callback(null, results[0]);
             }
         });
-    }
+    },
+
+    deleteItem: function(querySpec, callback) {
+      var self = this;
+self.client.queryDocuments(self.collection._self, querySpec).toArray(function (err, results) {
+          if (err) {
+              callback(err);
+
+          } else {
+            console.log(results)
+            docLink = 'dbs/' + self.databaseId + '/colls/' + self.collectionId + '/docs/' + results[0].id;
+            console.log(docLink)
+              self.client.deleteDocument(docLink, function (err, replaced) {
+                  if (err) {
+                      callback(err);
+
+                  } else {
+                      callback(null, replaced);
+                  }
+              });
+          }
+      });
+}
 };

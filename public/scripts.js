@@ -172,13 +172,30 @@ function checkReg(username, pword, confirm){
     $('#show-confirm').mouseup(function(){
       $('#confirm').attr('type', 'password')
     })
-    $('#addroom-btn').click(function(){
+    $('#add-btn').click(function(){
         $.post('/addroom', {
-          username : $('#username').val()
+          room : $('#addinput').val()
         }, function(data){
-
+          $('#msg').html(data.msg)
         });
       });
+
+      $('#delete-btn').click(function(){
+          $.post('/delete', {
+            room : $('#delete-input').val()
+          }, function(data){
+            $('#msg').html(data.msg)
+          });
+        });
+
+        $('#priv-btn').click(function(){
+            $.post('/privilege', {
+              username : $('#priv-user-input').val(),
+              priv : $('#priv-input').val()
+            }, function(data){
+              $('#msg').html(data.msg)
+            });
+          });
 
       $('#logout').click(function(){
         $.post('/logout', function(){

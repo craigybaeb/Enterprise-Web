@@ -131,7 +131,7 @@ a{
   flex-direction: column;
   justify-content: center;
 }
-#join-btn{
+#join-btn, #add-btn, #delete-btn, #priv-btn{
 	background-color: purple;
 	border-radius: 10px;
 	cursor: pointer;
@@ -164,7 +164,7 @@ a{
 		cursor: pointer;
 }
 
-#join-input{
+#join-input, #addinput, #delete-input, #priv-user-input, #priv-input{
     font-size: 32px;
 }
 
@@ -225,4 +225,21 @@ label{
 
 .password-container img{
 	margin-left: 5px;
+}
+
+#online{
+	visibility: hidden;
+	z-index: 1;
+	background-color: purple;
+	position: absolute;
+	padding: 5px 0;
+}
+
+#num-online:hover #online{
+  visibility: visible;
+}
+
+#num-online{
+	display: flex;
+	flex-direction: row;
 }

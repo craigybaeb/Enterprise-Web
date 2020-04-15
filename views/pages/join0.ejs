@@ -3,30 +3,35 @@
 <head>
 	<script src="../../socket.io/socket.io.js"></script>
 	<script src="https://code.jquery.com/jquery-1.10.1.min.js"></script>
-	<script src="join.js"></script>
+	<script src="scripts.js"></script>
 	<link rel="icon" href="favicon-32x32.png">
 	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href="nustyle.css">
-	<title>LectureChat - <%= room %></title>
+	<title>LectureChat - Join A Room</title>
 </head>
 <body>
 
 <div class="flex-container header">
-  <div id="logo">LectureChat - <%= room %></div>
+  <div id="logo">LectureChat</div>
 
 	<div id="links">
-	<div id="change">Change Room</div>
   <div><a href="/about">About</a></div>
-  <div><a href="" id="logout">Logout</a></div>
+  <div><a href="#">Logout</a></div>
 	</div>
 </div>
-<div id="num-online"><p>Num Online: </p><p id="num">0</p>
-<div id="online"></div></div>
-<div class="main"></div>
-
-<div class="flex-container chatbox_container">
-  <div><input autocomplete="off" autofocus="on" placeholder="Type your message here..." id="chatbox"></div>
-  <div id="send">Send</div>
+<div class=main_join>
+<div class="join_box">
+<div class="jbox">
+	<p>Join a room!</p>
+	<div id="join_container">
+		<form id="jform" action="/chat" method="post" >
+		<input name="room"id="join-input" type="text">
+	</form >
+	<div id="join-btn">Join</div>
 </div>
+</div>
+</div>
+</div>
+
 </body>
 </html>
