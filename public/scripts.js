@@ -58,10 +58,7 @@ $(document).ready(() =>{
 
 
   });
-$('#temp').click(() =>{
-joinRoom();
 
-})
 
 $('#leave').click(() =>{
 socket.emit('left', "Enterprise Web");

@@ -9,12 +9,14 @@ $(document).ready(function(){
     }
   });
   // append the chat text message
+  var audio = new Audio('/message.m4r');
+
   socket.on('chat_message', function(msg){
 
     if(name==msg.username){
       $('.main').append(`<div class="message_box">
       <div class="my">
-        <div class="my_message">${msg.msg}</div>
+        <div class="my_message new">${msg.msg}</div>
       </div>
       </div>`);
     }else{
@@ -23,14 +25,31 @@ $(document).ready(function(){
       $('.main').append(`<div class="message_box">
         <div class="sender">${msg.username}</div>
         <div class="recieved">
-        <div class="message">${msg.msg}</div>
+        <div class="message new">${msg.msg}</div>
         </div>
       </div>`);
     }
+
+    audio.play();
+    scroll();
+
   });
   // append text if someone is online
   socket.on('is_online', function(username) {
       $('#messages').append($('<li>').html(username));
+  });
+
+  // append text if someone is online
+  socket.on('typing', function(username) {
+      $('#typing').append(`<div id="${username}" class="message_box">
+        <div class="recieved">
+      	<div class="typing_message">${username} is typing...</div>
+        </div>
+      </div>`);
+  });
+
+  socket.on('stopped_typing', function(username) {
+      $(`#${username}`).remove();
   });
 
   socket.on('joined_chat', (username) => {
@@ -82,7 +101,7 @@ socket.emit('left', "Enterprise Web");
 })
 window.onbeforeunload = function(event) {
     socket.emit('left');
-    return 
+    return
 };
 $(window).on('hashchange', function(e){
   e.preventDefault();
@@ -225,6 +244,31 @@ function checkReg(username, pword, confirm){
           socket.emit('left');
           window.location.replace("/")
           });
+
+          function scroll(){
+              $(".main").animate({ scrollTop: $('.main').prop("scrollHeight")}, 1000);
+          }
+
+          $('#chatbox').keydown(()=>{
+            if(typing == false) {
+              typing = true
+              socket.emit('typing');
+              timeout = setTimeout(timeoutFunction, 5000);
+            } else {
+                clearTimeout(timeout);
+                timeout = setTimeout(timeoutFunction, 5000);
+                //socket.emit('stopped_typing')
+              }
+
+          })
+
+          var typing = false;
+var timeout = undefined;
+
+function timeoutFunction(){
+  typing = false;
+  socket.emit('stopped_typing');
+}
 
 
 })

@@ -54,5 +54,17 @@ io.sockets.on('connection', (socket) => {
 
     });
 
+    socket.on('typing', () => {
+      console.log("in typing")
+        io.sockets.in(socket.room).emit('typing', socket.username);
+
+    });
+
+    socket.on('stopped_typing', () => {
+        console.log("in stopped")
+        io.sockets.in(socket.room).emit('stopped_typing', socket.username);
+
+    });
+
 });
 }

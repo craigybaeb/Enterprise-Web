@@ -1,10 +1,10 @@
 <nav class="flex-container header">
   <div id="logo">LectureChat - <%= title %></div>
 	<div id="links">
-	   <div><a href="/">Home</a></div>
-     <div><a href="/about">About</a></div>
+	   <a href="/">Home</a>
+     <a href="/about">About</a>
      <% links.forEach((link) => { %>
-       <div><a href="<%= Object.keys(link) %>"><%= Object.values(link) %></a></div>
+       <a href="<%= Object.keys(link) %>"><%= Object.values(link) %></a>
      <% }) %>
 	</div>
 </nav>

@@ -14,7 +14,7 @@ const session = require('express-session')({
   resave: true,
   saveUninitialized: true,
   rolling : true,
-  cookie: {maxAge : 5 * 60 * 1000}
+  cookie: {maxAge : 10 * 60 * 1000}
   });
 
 //Configure and load models
@@ -34,8 +34,8 @@ const loginLimiter = new RateLimit({
 
 const dayLimiter = new RateLimit({
   windowMs: 60*60*1000*24, // 1 day window
-  max: 100, // start blocking after 100 requests
-  message: "Too many login attempts from this IP, please try again after an hour"
+  max: 1000, // start blocking after 100 requests
+  message: "Request blocked as daily request limit reached."
 });
 
 const app = express();
