@@ -1,5 +1,5 @@
-var DocumentDBClient = require('documentdb').DocumentClient;
-var docdbUtils = require('./docdbUtils');
+const DocumentDBClient = require('documentdb').DocumentClient;
+const docdbUtils = require('./docdbUtils');
 
 function TaskDao(documentDBClient, databaseId, collectionId) {
   this.client = documentDBClient;
@@ -14,7 +14,7 @@ module.exports = TaskDao;
 
 TaskDao.prototype = {
     init: function (callback) {
-        var self = this;
+        const self = this;
 
         docdbUtils.getOrCreateDatabase(self.client, self.databaseId, function (err, db) {
             if (err) {
@@ -34,7 +34,7 @@ TaskDao.prototype = {
     },
 
     find: function (querySpec, callback) {
-        var self = this;
+        const self = this;
 
         self.client.queryDocuments(self.collection._self, querySpec, { enableCrossPartitionQuery: true }).toArray(function (err, results) {
             if (err) {
@@ -47,7 +47,7 @@ TaskDao.prototype = {
     },
 
     addItem: function (item, callback) {
-        var self = this;
+        const self = this;
 
         self.client.createDocument(self.collection._self, item, function (err, doc) {
             if (err) {
@@ -60,7 +60,7 @@ TaskDao.prototype = {
     },
 
     updateItem: function (querySpec, priv, callback) {
-        var self = this;
+        const self = this;
         self.client.queryDocuments(self.collection._self, querySpec, { enableCrossPartitionQuery: true }).toArray(function (err, results) {
             if (err) {
                 callback(err);
@@ -82,9 +82,9 @@ TaskDao.prototype = {
     },
 
     getItem: function (itemId, callback) {
-        var self = this;
+        const self = this;
 
-        var querySpec = {
+        const querySpec = {
             query: 'SELECT * FROM root r WHERE r.id = @id',
             parameters: [{
                 name: '@id',
@@ -103,7 +103,7 @@ TaskDao.prototype = {
     },
 
     deleteItem: function(querySpec, callback) {
-      var self = this;
+      const self = this;
 self.client.queryDocuments(self.collection._self, querySpec).toArray(function (err, results) {
           if (err) {
               callback(err);

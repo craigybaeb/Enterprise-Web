@@ -67,9 +67,7 @@ socket.emit('left', "Enterprise Web");
 })
 var name = "";
   function joinRoom(room){
-    $.post("/savedMessages", {
-      room: room
-    },function(data){
+    $.get(`/room/${room}/messages`,function(data){
       $('.main').empty();
       name = data.username;
       data.messages.forEach(function(message){

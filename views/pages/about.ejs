@@ -1,25 +1,8 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<script src="../../socket.io/socket.io.js"></script>
-	<script src="https://code.jquery.com/jquery-1.10.1.min.js"></script>
-	<script src="scripts.js"></script>
-	<link rel="icon" href="favicon-32x32.png">
-	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
-	<link rel="stylesheet" type="text/css" href="nustyle.css">
-	<title>LectureChat - About</title>
-</head>
+<%- include('../partials/head', {title: "About"}) %>
 <body>
-
-<div class="flex-container header">
-  <div id="logo">LectureChat</div>
-
-	<div id="links">
-	<div><a href="/">Home</a></div>
-  <div><a href="">About</a></div>
-  <div><a href="/logout">Logout</a></div>
-	</div>
-</div>
+<%- include('../partials/headerSwitch') %>
 
 <div class="main">
   <div class="about_box">

@@ -1,38 +1,23 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<script src="../../socket.io/socket.io.js"></script>
-	<script src="https://code.jquery.com/jquery-1.10.1.min.js"></script>
-	<script src="scripts.js"></script>
-	<link rel="icon" href="favicon-32x32.png">
-	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
-	<link rel="stylesheet" type="text/css" href="nustyle.css">
-	<title>LectureChat - Join A Room</title>
-</head>
+<%- include('../partials/head', {title: "Join A Room"}) %>
 <body>
+<%- include('../partials/headerSwitch') %>
 
-<div class="flex-container header">
-  <div id="logo">LectureChat - Join</div>
-
-	<div id="links">
-  <div><a href="/about">About</a></div>
-	<div><a href="/addroom">Add</a></div>
-  <div><a href="#">Logout</a></div>
-	</div>
-</div>
 <div class=main_join>
 <div class="join_box">
 <div class="jbox">
 	<p>Join a room!</p>
 	<div id="join_container">
-		<form id="jform" action="/chat" method="post" >
+		<form id="jform" action="/chat" method="GET" >
 		<select name="room" id="join-input">
 			<% rooms.forEach(function(room){ %>
 				<option value="<%= room.room %>"><%= room.room %></option>
 			<% }); %>
 		</select>
-	</form >
+	</form>
 	<div id="join-btn">Join</div>
+	<p id="msg"></p>
 </div>
 </div>
 </div>

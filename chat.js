@@ -1,6 +1,6 @@
-module.exports = function(io) {
+module.exports = (io) => {
   return function(req, res){
-    var room = req.room;
+    const room = req.room;
 
     io.on('connection', function(socket){
         socket.join(room);
