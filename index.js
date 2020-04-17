@@ -79,7 +79,7 @@ app.get('/room/add', isLoggedIn, isAdmin, (req, res) => {res.render('pages/addro
 app.get('/room/delete', isLoggedIn, isAdmin, deletePage); //Delete room page
 app.get('/privilege', isLoggedIn, isMaster, (req, res) => {res.render('pages/escalate', {privilege: req.session.priv})}) //Edit user privileges page
 app.get('/room/:room/messages', isLoggedIn, getMessages);
-
+app.get('/admin', isLoggedIn, isAdmin, (req,res) => {res.render('pages/admin', {privilege: req.session.priv})})
 //Join the chosen room
 app.get('/room/:room', isLoggedIn, (req, res) => {
   req.session.room = req.params.room;

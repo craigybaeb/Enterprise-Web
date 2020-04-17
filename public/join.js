@@ -21,8 +21,10 @@ $(document).ready(function(){
 
 
       $('.main').append(`<div class="message_box">
-      	<div class="sender">${msg.username}</div>
-      	<div class="message">${msg.msg}</div>
+        <div class="sender">${msg.username}</div>
+        <div class="recieved">
+        <div class="message">${msg.msg}</div>
+        </div>
       </div>`);
     }
   });
@@ -31,8 +33,21 @@ $(document).ready(function(){
       $('#messages').append($('<li>').html(username));
   });
 
-  socket.on('joined_room', function(message) {
-      $('#messages').append($('<li>').html(message));
+  socket.on('joined_chat', (username) => {
+      $('.main').append(`<div class="message_box">
+        <div class="recieved">
+      	<div class="join_message">${username} joined the chat.</div>
+        </div>
+      </div>`);
+
+  });
+
+  socket.on('left_chat', (username) => {
+      $('.main').append(`<div class="message_box">
+        <div class="recieved">
+      	<div class="join_message">${username} left the chat.</div>
+        </div>
+      </div>`);
 
   });
 
@@ -65,6 +80,17 @@ $('#leave').click(function(){
 socket.emit('left', "Enterprise Web");
 
 })
+window.onbeforeunload = function(event) {
+    socket.emit('left');
+    return 
+};
+$(window).on('hashchange', function(e){
+  e.preventDefault();
+  alert()
+  let url = this.href;
+  socket.emit('left', "Enterprise Web");
+
+})
 var name = "";
   function joinRoom(room){
     $.get(`/room/${room}/messages`,function(data){
@@ -80,7 +106,9 @@ var name = "";
         }else{
         $('.main').append(`<div class="message_box">
         	<div class="sender">${message.sender}</div>
+          <div class="recieved">
         	<div class="message">${message.message}</div>
+          </div>
         </div>`);
       }
       })

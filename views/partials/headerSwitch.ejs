@@ -4,18 +4,10 @@ case "1" : %>
                                                                      {"/logout" : "Logout"}]}) %>
       <% break;
 
-case "2" : %>
-<%- include('../partials/header', {title: "Join Room", links: [{"/" : "Join Room"},
-                                                            {"/room/add" : "Add Room"},
-                                                            {"/room/delete" : "Delete Room"},
-                                                            {"/logout" : "Logout"}]}) %>
-      <% break;
-
+case "2" :
 case "3" : %>
 <%- include('../partials/header', {title: "Join Room", links: [{"/" : "Join Room"},
-                                                            {"/room/add" : "Add Room"},
-                                                            {"/room/delete" : "Delete Room"},
-                                                            {"/privilege" : "Edit User Privileges"},
+                                                            {"/admin" : "Admin Portal"},
                                                             {"/logout" : "Logout"}]}) %>
       <% break;
 default : %>

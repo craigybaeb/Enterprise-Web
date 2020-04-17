@@ -21,7 +21,9 @@ $(document).ready(() =>{
 
       $('.main').append(`<div class="message_box">
       	<div class="sender">${msg.username}</div>
+        <div class="recieved">
       	<div class="message">${msg.msg}</div>
+        </div>
       </div>`);
     }
   });
@@ -30,8 +32,12 @@ $(document).ready(() =>{
       $('#messages').append($('<li>').html(username));
   });
 
-  socket.on('joined_room', (message) => {
-      $('#messages').append($('<li>').html(message));
+  socket.on('joined_chat', (username) => {
+      $('.main').append(`<div class="message_box">
+        <div class="recieved">
+      	<div class="join_message">${username} joined the chat.</div>
+        </div>
+      </div>`);
 
   });
 
@@ -186,7 +192,7 @@ $('#login-btn').click(() =>{
 
       $('#delete-btn').click(() =>{
           const room = $('#delete-input').val();
-        
+
           $.ajax({
             url: `/room/${room}`,
             type: 'DELETE',
