@@ -20,7 +20,7 @@ module.exports = {
 },
 
   saveMessage: (sender, room, message) => {
-    const item = {sender:sender, room:room, message:message}
+    const item = {sender:sender, room:room, message:escape(message)}
 
     taskDaoMessages.addItem(item, (err) => {});
   }

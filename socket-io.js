@@ -14,7 +14,7 @@ io.sockets.on('connection', (socket) => {
 
         socket.username = socket.handshake.session.username;
         socket.room = socket.handshake.session.room;
-        console.log("ROOM" + socket.room)
+  
         socket.join(socket.room);
         users[socket.id] = socket.username;
         count++;

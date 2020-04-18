@@ -3,11 +3,11 @@ const connectionString = 'DefaultEndpointsProtocol=https;AccountName=enterprisef
 const express = require('express');
 const RateLimit = require('express-rate-limit');
 const cookieParser = require('cookie-parser');
-const { check, validationResult } = require('express-validator');
+const { check, validationResult, body } = require('express-validator');
 const bodyParser = require('body-parser');
 const controller = require('./routes/controller');
-const {isLoggedIn, isMaster, isAdmin} = require("./access");
-
+const { isLoggedIn, isMaster, isAdmin } = require("./access");
+const helmet = require('helmet');
 const session = require('express-session')({
   secret: "Shh, its a secret!",
   httpOnly: true,
@@ -29,7 +29,7 @@ const { getMessages } = require('./messageList')(TaskDao, config, docDbClient);
 const loginLimiter = new RateLimit({
   windowMs: 60*60*1000, // 1 hour window
   max: 5, // start blocking after 5 requests
-  message: "Too many accounts created from this IP, please try again after an hour"
+  message: "Too many login attempts from this IP, please try again after an hour"
 });
 
 const dayLimiter = new RateLimit({
@@ -40,6 +40,7 @@ const dayLimiter = new RateLimit({
 
 const app = express();
 
+app.use(helmet())
 app.use('/room', express.static(__dirname + '/public'));
 app.use(express.static(__dirname + '/public'));
 app.use(cookieParser());
@@ -50,19 +51,6 @@ app.use(express.urlencoded())
 
 app.set('view engine', 'ejs');
 app.set('/views', __dirname + '/views');
-
-app.disable('x-powered-by');
-
-//const helmet = require('helmet');
-//app.use(helmet.contentSecurityPolicy({
-//   directives: {
-//     defaultSrc: ["'self'"],
-//     scriptSrc: ["'self'", 'https://code.jquery.com'],
-//     styleSrc: ["'self'", 'https://fonts.googleapis.com'],
-//     fontSrc: ['https://fonts.gstatic.com'],
-//
-//   }
-// }))
 
 app.enable('trust proxy');
 
@@ -80,6 +68,7 @@ app.get('/room/delete', isLoggedIn, isAdmin, deletePage); //Delete room page
 app.get('/privilege', isLoggedIn, isMaster, (req, res) => {res.render('pages/escalate', {privilege: req.session.priv})}) //Edit user privileges page
 app.get('/room/:room/messages', isLoggedIn, getMessages);
 app.get('/admin', isLoggedIn, isAdmin, (req,res) => {res.render('pages/admin', {privilege: req.session.priv})})
+
 //Join the chosen room
 app.get('/room/:room', isLoggedIn, (req, res) => {
   req.session.room = req.params.room;
