@@ -9,25 +9,39 @@ $(document).ready(function(){
     }
   });
   // append the chat text message
-  var audio = new Audio('/message.m4r');
+  var isMac = navigator.platform.toUpperCase().indexOf('MAC')>=0;
+  var audio;
+  isMac ? audio = new Audio('/message.m4r') : audio = new Audio('/message.mp3');
+
 
   socket.on('chat_message', function(msg){
 
     if(name==msg.username){
-      $('.main').append(`<div class="message_box">
+      const html = `<div class="message_box">
       <div class="my">
         <div class="my_message new">${msg.msg}</div>
       </div>
-      </div>`);
+      </div>`
+
+      if($('.typing_message:first').length){
+        $('.typing_message:first').parent().parent().before(html);
+      }else{
+        $('.main').append(html);
+      }
+
     }else{
-
-
-      $('.main').append(`<div class="message_box">
+      const html = `<div class="message_box">
         <div class="sender">${msg.username}</div>
         <div class="recieved">
         <div class="message new">${msg.msg}</div>
         </div>
-      </div>`);
+      </div>`
+
+      if($('.typing_message:first').length){
+        $('.typing_message:first').parent().parent().before(html);
+      }else{
+        $('.main').append(html);
+      }
     }
 
     audio.play();
@@ -41,7 +55,7 @@ $(document).ready(function(){
 
   // append text if someone is online
   socket.on('typing', function(username) {
-      $('#typing').append(`<div id="${username}" class="message_box">
+      $('.main').append(`<div id="${username}" class="message_box">
         <div class="recieved">
       	<div class="typing_message">${username} is typing...</div>
         </div>
@@ -58,6 +72,7 @@ $(document).ready(function(){
       	<div class="join_message">${username} joined the chat.</div>
         </div>
       </div>`);
+      scroll();
 
   });
 
@@ -67,6 +82,7 @@ $(document).ready(function(){
       	<div class="join_message">${username} left the chat.</div>
         </div>
       </div>`);
+      scroll();
 
   });
 

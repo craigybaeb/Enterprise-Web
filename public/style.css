@@ -81,7 +81,7 @@ a{
   margin-bottom: 10px;
   display: flex;
   flex-direction: column;
-  padding: 5px;
+  padding: 5px 15px;
 }
 
 .about_box{
@@ -109,6 +109,7 @@ a{
     border-radius: 10px;
     background-color: #d3d3d3;
     padding: 10px;
+		word-break: break-all;
 }
 
 .my_message{
@@ -117,6 +118,7 @@ a{
     background-color: purple;
     padding: 10px;
 		color: white;
+		word-break: break-all;
 }
 
 .join_message{
@@ -133,6 +135,11 @@ a{
     background-color: #0053a0;
     padding: 10px;
 		color: white;
+}
+
+.main.typing_message{
+	position: absolute;
+	bottom 0px;
 }
 
 .my{
@@ -264,11 +271,6 @@ label{
 	flex-direction: row;
 	justify-content: space-between;
 	text-align: center;
-}
-
-#typing{
-	display: flex;
-	flex-direction: row;
 }
 
 @keyframes shake {
