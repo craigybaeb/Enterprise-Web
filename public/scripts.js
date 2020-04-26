@@ -151,13 +151,13 @@ $('#login-btn').click(() =>{
         password: password
       }, (data) => {
         $('#msg').html(data.msg)
-        window.location.replace("/")
         if(data.errors){
             $('#msg').html(data.errors[0].msg);
         }
 
       });
     }else {
+      window.location.replace("/")
       $('#msg').html(msg)
 
     }

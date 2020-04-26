@@ -33,14 +33,18 @@ module.exports= (TaskDao, config, docDbClient) => {
             res.send({msg:err});
         }
 
+        if(items.length){
         if(passwordHash.verify(password, items[0].password)){
           req.session.username = username;
           req.session.priv = items[0].priv;
 
           res.send({match: true, msg:"Login success!"});
         }else{
-          res.send({match: false, msg:"Password does not match the one stored for this user!"});
+          res.send({match: false, msg:"Username and password don't match!"});
         }
+      }else{
+        res.send({match: false, msg:"Username and password don't match!"});
+      }
 
     });
   },

@@ -56,7 +56,7 @@ app.enable('trust proxy');
 
 //Setup socket.io
 const server = require('http').Server(app);
-const socket = require('./socket-io')(session, server);
+require('./socket-io')(session, server);
 
 //Handle 'GET' requests
 app.get('/', isLoggedIn, main);
@@ -83,17 +83,24 @@ app.get('/logout', (req, res) => {
 
 //Delete a room
 app.delete('/room/:room', isLoggedIn, isAdmin, deleteRoom);
-
+const val = (req,res,next) =>{
+  if(req.body.username.length > 0 & req.body.username.length < 15){
+    ['<','>'].forEach((char)=>{
+      if(req.body.username.split("").includes(char)){
+        console.log("FOUND");
+      }
+    })
+  }
+  next()
+}
 //Update user privileges
 app.put('/privilege', isLoggedIn, isMaster, editPrivileges);
 
 //Handle 'POST' requests
 app.post('/login', loginLimiter, login); //Login
 app.post('/room', isLoggedIn, isAdmin, addRoom); //Add new room
-app.post('/register', [
-  check('username').isLength({ min: 3, max: 15 }).withMessage('Username must be between 3-15 characters long!'),
-  check('password').isLength({ min: 6, max: 15 }).withMessage('Password must be between 6-15 characters long!')],
-    register);
+app.post('/register', val,register);
+
 
 //Start the server
 server.listen(8080, () => {console.log('listening on *:8080')});

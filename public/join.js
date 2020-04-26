@@ -19,7 +19,7 @@ $(document).ready(function(){
     if(name==msg.username){
       const html = `<div class="message_box">
       <div class="my">
-        <div class="my_message new">${msg.msg}</div>
+        <div class="my_message new"></div>
       </div>
       </div>`
 
@@ -28,12 +28,12 @@ $(document).ready(function(){
       }else{
         $('.main').append(html);
       }
-
+      $('.my_message').last().text(msg.msg);
     }else{
       const html = `<div class="message_box">
-        <div class="sender">${msg.username}</div>
+        <div class="sender"></div>
         <div class="recieved">
-        <div class="message new">${msg.msg}</div>
+        <div class="message new"></div>
         </div>
       </div>`
 
@@ -42,6 +42,8 @@ $(document).ready(function(){
       }else{
         $('.main').append(html);
       }
+      $('.message').last().text(msg.msg);
+      $('.sender').last().text(msg.username);
     }
 
     audio.play();
@@ -55,23 +57,25 @@ $(document).ready(function(){
 
   // append text if someone is online
   socket.on('typing', function(username) {
-      $('.main').append(`<div id="${username}" class="message_box">
+      $('.main').append(`<div id="${escape(username)}" class="message_box">
         <div class="recieved">
-      	<div class="typing_message">${username} is typing...</div>
+      	<div class="typing_message"></div>
         </div>
       </div>`);
+      $('.typing_message').last().text(`${username} is typing...`);
   });
 
   socket.on('stopped_typing', function(username) {
-      $(`#${username}`).remove();
+      $(`#${escape(username)}`).remove();
   });
 
   socket.on('joined_chat', (username) => {
       $('.main').append(`<div class="message_box">
         <div class="recieved">
-      	<div class="join_message">${username} joined the chat.</div>
+      	<div class="join_message"></div>
         </div>
       </div>`);
+      $('.join_message').last().text(`${username} joined the chat.`);
       scroll();
 
   });
@@ -79,9 +83,10 @@ $(document).ready(function(){
   socket.on('left_chat', (username) => {
       $('.main').append(`<div class="message_box">
         <div class="recieved">
-      	<div class="join_message">${username} left the chat.</div>
+      	<div class="join_message"></div>
         </div>
       </div>`);
+      $('.join_message').last().text(`${username} left the chat.`);
       scroll();
 
   });
@@ -90,23 +95,12 @@ $(document).ready(function(){
     $('#online').empty();
     $('#num').html(num);
     users.forEach(function(user){
-      $('#online').append($('<p>').html(user));
+      $('#online').append($('<p>').text(user));
     })
 
 
   });
 
-  socket.on('whos_online', function(users) {
-    users.forEach(function(user){
-      $('#users').append($('<li>').html(user));
-    })
-
-
-  });
-$('#temp').click(function(){
-joinRoom();
-
-})
 var segment_str = window.location.pathname; // return segment1/segment2/segment3/segment4
 var segment_array = segment_str.split( '/' );
 var last_segment = segment_array.pop();
@@ -135,16 +129,19 @@ var name = "";
         if(data.username == message.sender){
           $('.main').append(`<div class="message_box">
           <div class="my">
-          	<div class="my_message">${message.message}</div>
+          	<div class="my_message"></div>
           </div>
           </div>`);
+          $('.my_message').last().text(message.message);
         }else{
         $('.main').append(`<div class="message_box">
-        	<div class="sender">${message.sender}</div>
+        	<div class="sender"></div>
           <div class="recieved">
-        	<div class="message">${message.message}</div>
+        	<div class="message"></div>
           </div>
         </div>`);
+        $('.message').last().text(message.message);
+        $('.sender').last().text(message.sender);
       }
       })
       socket.emit('username', room);
