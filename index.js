@@ -1,11 +1,10 @@
-//const DocumentDBClient = require('documentdb').DocumentClient;
-//const connectionString = 'DefaultEndpointsProtocol=https;AccountName=enterpriseface;AccountKey=TljXRnTsV3zc1YbD2oLvsC3co/zdLQNpwWyII65EVCSoNoOTyQ7y7wtJVJKBHgw01NnY3IcD5kbJ6U1nweYgjw==;EndpointSuffix=core.windows.net';
 const express = require('express');
 const RateLimit = require('express-rate-limit');
 const cookieParser = require('cookie-parser');
 const { check, validationResult, body } = require('express-validator');
 const bodyParser = require('body-parser');
-const { isLoggedIn, isMaster, isAdmin } = require("./access");
+const { isLoggedIn, isMaster, isAdmin } = require("./routes/access");
+const {roomTasks, messageTasks, userTasks} = require("./routes/loadModels");
 const helmet = require('helmet');
 const session = require('express-session')({
   secret: "Shh, its a secret!",
@@ -14,16 +13,7 @@ const session = require('express-session')({
   saveUninitialized: true,
   rolling : true,
   cookie: {maxAge : 10 * 60 * 1000}
-  });
-
-//Configure and load models
-const {roomConfig, messageConfig, userConfig} = require('./models/config');
-const TaskDao = require('./models/taskDao');
-const CosmosClient = require('@azure/cosmos').CosmosClient
-const RoomTasks = require('./RoomTasks')
-const UserTasks = require('./UserTasks')
-const MessageTasks = require('./MessageTasks')
-
+  })
 //const urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 const loginLimiter = new RateLimit({
@@ -56,60 +46,7 @@ app.enable('trust proxy');
 
 //Setup socket.io
 const server = require('http').Server(app);
-require('./socket-io')(session, server);
-
-
-//Todo App:
-const cosmosClient = new CosmosClient({
- endpoint: userConfig.host,
- key: userConfig.authKey
-})
-
-const roomDao = new TaskDao(cosmosClient, roomConfig.databaseId, roomConfig.collectionId, "/room");
-const messageDao = new TaskDao(cosmosClient, messageConfig.databaseId, messageConfig.collectionId, "/room");
-const userDao = new TaskDao(cosmosClient, userConfig.databaseId, userConfig.collectionId, "/username");
-
-roomDao
- .init(err => {
-   console.error(err)
- })
- .catch(err => {
-   console.error(err)
-   console.error(
-     'Shutting down because there was an error settinig up the database.'
-   )
-   process.exit(1)
- })
-
-messageDao
- .init(err => {
-   console.error(err)
- })
- .catch(err => {
-   console.error(err)
-   console.error(
-     'Shutting down because there was an error settinig up the database.'
-   )
-   process.exit(1)
- })
-
-userDao
- .init(err => {
-   console.error(err)
- })
- .catch(err => {
-   console.error(err)
-   console.error(
-     'Shutting down because there was an error settinig up the database.'
-   )
-   process.exit(1)
- })
-
- const roomTasks = new RoomTasks(roomDao);
- const messageTasks = new MessageTasks(messageDao);
- const userTasks = new UserTasks(userDao);
-
-
+require('./routes/socket-io')(session, server);
 
 //Handle 'GET' requests
 app.get('/', isLoggedIn, (req,res) => roomTasks.joinRoom(req,res));
