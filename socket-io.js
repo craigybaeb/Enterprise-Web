@@ -1,4 +1,33 @@
-const controller = require("./routes/controller")
+//const controller = require("./routes/controller")
+const {roomConfig, messageConfig, userConfig} = require('./models/config');
+
+const TaskDao = require('./models/taskDao');
+
+const CosmosClient = require('@azure/cosmos').CosmosClient
+
+const MessageTasks = require('./MessageTasks')
+
+const cosmosClient = new CosmosClient({
+ endpoint: userConfig.host,
+ key: userConfig.authKey
+})
+
+const messageDao = new TaskDao(cosmosClient, messageConfig.databaseId, messageConfig.collectionId, "/room");
+
+messageDao
+ .init(err => {
+   console.error(err)
+ })
+ .catch(err => {
+   console.error(err)
+   console.error(
+     'Shutting down because there was an error settinig up the database.'
+   )
+   process.exit(1)
+ })
+
+ const messageTasks = new MessageTasks(messageDao);
+
 module.exports=  (session, server) => {
 
 
@@ -58,7 +87,7 @@ io.sockets.on('connection', (socket) => {
     })
 
     socket.on('chat_message', (message) => {
-        controller.saveMessage(socket.username, socket.room, message);
+        messageTasks.saveMessage(socket.username, socket.room, message);
 
         io.sockets.in(socket.room).emit('chat_message', {username:socket.username, msg:message});
 

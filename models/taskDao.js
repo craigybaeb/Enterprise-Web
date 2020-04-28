@@ -1,126 +1,84 @@
-const DocumentDBClient = require('documentdb').DocumentClient;
-const docdbUtils = require('./docdbUtils');
+// @ts-check
+ const CosmosClient = require('@azure/cosmos').CosmosClient
 
-function TaskDao(documentDBClient, databaseId, collectionId) {
-  this.client = documentDBClient;
-  this.databaseId = databaseId;
-  this.collectionId = collectionId;
+console.log("DAOING")
+ // For simplicity we'll set a constant partition key
+ class TaskDao {
+   /**
+    * Manages reading, adding, and updating Tasks in Cosmos DB
+    * @param {CosmosClient} cosmosClient
+    * @param {string} databaseId
+    * @param {string} containerId
+    * @param {string} partitionKey
+    */
+   constructor(cosmosClient, databaseId, containerId, partitionKey) {
+     this.client = cosmosClient
+     this.databaseId = databaseId
+     this.collectionId = containerId
+     this.partitionKey = partitionKey
 
-  this.database = null;
-  this.collection = null;
-}
+     this.database = null
+     this.container = null
+   }
 
-module.exports = TaskDao;
+   async init() {
+     console.log('Setting up the database...')
+     const dbResponse = await this.client.databases.createIfNotExists({
+       id: this.databaseId
+     })
+     this.database = dbResponse.database
+     console.log('Setting up the database...done!')
+     console.log('Setting up the container...')
+     const coResponse = await this.database.containers.createIfNotExists({
+       id: this.collectionId
+     })
+     this.container = coResponse.container
+     console.log('Setting up the container...done!')
+   }
 
-TaskDao.prototype = {
-    init: function (callback) {
-        const self = this;
+   async find(querySpec) {
+     console.log('Querying for items from the database')
+     if (!this.container) {
+       throw new Error('Collection is not initialized.')
+     }
+     const { resources } = await this.container.items.query(querySpec).fetchAll()
+     return resources
+   }
 
-        docdbUtils.getOrCreateDatabase(self.client, self.databaseId, function (err, db) {
-            if (err) {
-                callback(err);
-            } else {
-                self.database = db;
-                docdbUtils.getOrCreateCollection(self.client, self.database._self, self.collectionId, function (err, coll) {
-                    if (err) {
-                        callback(err);
+   async addItem(item) {
+     console.log(`Adding item to the database`)
+    //const item = {room:room}
+    const { resource: doc } = await this.container.items.create(item);
+    return doc;
+   }
 
-                    } else {
-                        self.collection = coll;
-                    }
-                });
-            }
-        });
-    },
+   async getItem(itemId) {
+     console.log('Getting an item from the database')
+     const { resource } = await this.container.item(itemId, partitionKey).read()
+     return resource
+   }
 
-    find: function (querySpec, callback) {
-        const self = this;
+   async updateItem(querySpec, priv) {
+     console.log('Update an item in the database')
+     const doc = await this.find(querySpec)
+     doc[0].priv = priv;
 
-        self.client.queryDocuments(self.collection._self, querySpec, { enableCrossPartitionQuery: true }).toArray(function (err, results) {
-            if (err) {
-                callback(err);
+     const { resource: updated } = await this.container
+       .item(doc[0].id, querySpec.parameters[0].value)
+       .replace(doc[0])
+     return updated
+   }
 
-            } else {
-                callback(null, results);
-            }
-        });
-    },
+   async deleteItem(querySpec) {
+     console.log('Delete an item in the database')
+     const doc = await this.find(querySpec)
+     console.log("DOC")
+     console.log(doc[0].id)
+     const { resource: deleted } = await this.container
+       .item(doc[0].id, querySpec.parameters[0].value)
+       .delete()
+     return deleted
+   }
+ }
 
-    addItem: function (item, callback) {
-        const self = this;
-
-        self.client.createDocument(self.collection._self, item, function (err, doc) {
-            if (err) {
-                callback(err);
-
-            } else {
-                callback(null, doc);
-            }
-        });
-    },
-
-    updateItem: function (querySpec, priv, callback) {
-        const self = this;
-        self.client.queryDocuments(self.collection._self, querySpec, { enableCrossPartitionQuery: true }).toArray(function (err, results) {
-            if (err) {
-                callback(err);
-
-            } else {
-              console.log("££££" + results)
-                results[0].priv = priv;
-
-                self.client.replaceDocument(results[0]._self, results[0], function (err, replaced) {
-                    if (err) {
-                        callback(err);
-
-                    } else {
-                        callback(null, replaced);
-                    }
-                });
-            }
-        });
-    },
-
-    getItem: function (itemId, callback) {
-        const self = this;
-
-        const querySpec = {
-            query: 'SELECT * FROM root r WHERE r.id = @id',
-            parameters: [{
-                name: '@id',
-                value: itemId
-            }]
-        };
-
-        self.client.queryDocuments(self.collection._self, querySpec).toArray(function (err, results) {
-            if (err) {
-                callback(err);
-
-            } else {
-                callback(null, results[0]);
-            }
-        });
-    },
-
-    deleteItem: function(querySpec, callback) {
-      const self = this;
-self.client.queryDocuments(self.collection._self, querySpec).toArray(function (err, results) {
-          if (err) {
-              callback(err);
-
-          } else {
-            console.log(results)
-            docLink = 'dbs/' + self.databaseId + '/colls/' + self.collectionId + '/docs/' + results[0].id;
-            console.log(docLink)
-              self.client.deleteDocument(docLink, function (err, replaced) {
-                  if (err) {
-                      callback(err);
-
-                  } else {
-                      callback(null, replaced);
-                  }
-              });
-          }
-      });
-}
-};
+ module.exports = TaskDao
