@@ -11,7 +11,7 @@ $(document).ready(function(){
   // append the chat text message
   var isMac = navigator.platform.toUpperCase().indexOf('MAC')>=0;
   var audio;
-  isMac ? audio = new Audio('/message.m4r') : audio = new Audio('/message.mp3');
+  isMac ? audio = new Audio('/audio/message.m4r') : audio = new Audio('/audio/message.mp3');
 
 
   socket.on('chat_message', function(msg){

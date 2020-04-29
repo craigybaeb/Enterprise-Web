@@ -27,10 +27,6 @@ $(document).ready(() =>{
       </div>`);
     }
   });
-  // append text if someone is online
-  socket.on('is_online', (username) => {
-      $('#messages').append($('<li>').html(username));
-  });
 
   socket.on('joined_chat', (username) => {
       $('.main').append(`<div class="message_box">
@@ -146,7 +142,7 @@ $('#login-btn').click(() =>{
     let msg = ""
     msg = checkReg(username,password, confirm);
     if(msg==""){
-      $.post('/register', {
+      $.post('/user', {
         username : username,
         password: password
       }, (data) => {
@@ -201,10 +197,9 @@ $('#login-btn').click(() =>{
 
         $('#priv-btn').click(() =>{
           $.ajax({
-            url: '/privilege',
+            url: '/user/' + escape($('#priv-user-input').val()),
             type: 'PUT',
-            data : {username:$('#priv-user-input').val(),
-                    priv:$('#priv-input').val()},
+            data : { priv:$('#priv-input').val() },
             success: (result) => {
               $('#msg').html(result.msg)
             }

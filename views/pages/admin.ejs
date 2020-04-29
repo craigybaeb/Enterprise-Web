@@ -18,18 +18,18 @@
 
 						<!-- Link buttons -->
 						<!-- Add room button -->
-						<a href="/room/add">
+						<a href="/admin/room/add">
 							<div id="admin-add-btn" class="btn">Add Room</div>
 						</a>
 
 						<!-- Delete room button -->
-						<a href="/room/delete">
+						<a href="/admin/room/delete">
 							<div id="admin-delete-btn" class="btn">Delete Room</div>
 						</a>
 
 						<!-- Only load Edit User Privliges button if high level admin -->
 						<% if(privilege == "3"){ %>
-							<a href="/privilege">
+							<a href="/admin/privileges">
 								<div id="admin-edit-btn" class="btn">Edit User Privileges</div>
 							</a>
 						<% } %>
