@@ -111,6 +111,7 @@ class TaskDao {
    return false; //Cannot be deleted
  }
  } //End deleteItem()
+ 
 } //End TaskDao
 
  module.exports = TaskDao //Export the model (TaskDao) for use by the controllers

@@ -58,10 +58,7 @@ $(document).ready(() =>{
 
         //Failure
         .fail((data) =>{
-          $('#msg').empty();
-          data.responseJSON.msg.forEach((msg)=>{
-            $('#msg').append(msg + "<br><br>");
-          })
+          $('#msg').html(data.responseJSON.msg); //Display the servers response
         })
 
   });
@@ -96,6 +93,7 @@ $(document).ready(() =>{
 
     //'Delete' button is clicked
     $('#delete-btn').click(() =>{
+        confirm("are you sure")
         //Get room from input
         const room = $('#delete-input').val();
 
@@ -264,10 +262,7 @@ $(document).ready(() =>{
                 $('#msg').html(response.responseText);
               },
               401: (response) => {
-                $('#msg').empty(); //Clear the errors
-                response.responseJSON.msg.forEach((msg)=>{
-                  $('#msg').append(msg + "<br><br>");
-                })
+                $('#msg').html(response.responseJSON.msg)
               },
               404: (response) => {
                 $('#msg').html(response.responseJSON.msg)
