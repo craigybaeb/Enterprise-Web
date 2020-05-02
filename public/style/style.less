@@ -1,0 +1,290 @@
+/** This CSS file styles the LectureChat web application **/
+
+/** Define the variables **/
+@blue: #0053a0;
+@grey: #d3d3d3;
+
+/** Define the mixins **/
+.message-mixin {
+  max-width: 40vw;
+  border-radius: 10px;
+  padding: 10px;
+  word-break: break-all;
+}
+
+body{
+	margin: 0px;
+    padding: 0px;
+		font-family: 'Roboto', sans-serif;
+   }
+.flex-container {
+  display: flex;
+  flex-direction: row;
+}
+
+#logo{
+	min-width: 40vw;
+}
+
+
+.main{
+	height: 82vh;
+  overflow-y: scroll;
+}
+
+.main_join{
+	height: 80vh;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	margin-top: 45px;
+}
+
+.header{
+	border-bottom: 4px purple solid;
+	margin-bottom: 25px;
+	height: 5vw;
+	align-items: center;
+}
+.header > div{
+	min-width: 15vw;
+    font-size: 30px;
+    text-align: center;
+}
+
+a{
+	text-decoration: none;
+}
+.chatbox_container > div{
+	min-width: 10vw;
+}
+
+#chatbox{
+	min-width: 90vw;
+  height: 5vh;
+}
+
+.join_box{
+	min-width: 60vw;
+		border-radius: 10px;
+
+		padding: 10px;
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		border-radius: 10px;
+		background-color: @grey;
+}
+
+.sender{
+	min-width: 20vw;
+    padding-left: 10px;
+}
+
+.message_box > div{
+	text-align: left;
+}
+#links{
+	font-size: 24px;
+	display: flex;
+  flex-direction: row;
+	justify-content: space-between;
+}
+
+#links a{
+	padding: 0 10px;
+}
+
+.message_box{
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  padding: 5px 15px;
+}
+
+.about_box{
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+	margin: 25px 50px;
+}
+
+.about_box2{
+  display: flex;
+  flex-direction: row;
+	justify-content: flex-end;
+	margin: 25px 50px;
+}
+
+#how{
+	background-color: purple;
+	color: white;
+}
+
+.message{
+    .message-mixin();
+    background-color: @grey;
+}
+
+.my_message{
+	  .message-mixin();
+    background-color: purple;
+		color: white;
+}
+
+.join_message, .typing_message{
+    .message-mixin();
+    background-color: @blue;
+		color: white;
+}
+
+.main.typing_message{
+	position: absolute;
+	// bottom: 0px;
+}
+
+.my{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.recieved{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+.jbox{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.btn{
+	background-color: purple;
+	border-radius: 10px;
+	cursor: pointer;
+	width: 100px;
+	font-size: 24px;
+	color: white;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 5px;
+}
+.jbox > p{
+	font-size: 72px;
+}
+
+#join_container{
+	display: flex;
+  flex-direction: column;
+	justify-content: space-between;
+}
+
+#join_container > input{
+	width: 200px;
+}
+#send{
+	background-color: purple;
+	display: flex;
+  	justify-content: center;
+  	align-items: center;
+    color: white;
+		cursor: pointer;
+}
+
+#join-input, #addinput, #delete-input, #priv-user-input, #priv-input{
+    font-size: 32px;
+}
+
+#show, #show-confirm{
+	cursor: pointer;
+}
+
+.question{
+	font-size: 32px;
+}
+
+.answer{
+  .message-mixin();
+	font-size: 24px;
+    background-color: @grey;
+}
+
+#username, #password, #confirm{
+	font-size: 24px;
+}
+label{
+	font-size: 24px;
+	display: inline-flex;
+	text-align: right;
+	min-width: 10vw;
+}
+
+#reg-form label{
+	font-size: 24px;
+	display: inline-flex;
+	text-align: right;
+	min-width: 15vw;
+}
+
+#username{
+	margin-bottom: 5px;
+}
+
+.password-container{
+	display: flex;
+	align-items: stretch;
+}
+
+.password-container img{
+	margin-left: 5px;
+}
+
+#online{
+	visibility: hidden;
+	z-index: 1;
+	background-color: @grey;
+	padding: 5px 0;
+	border-radius: 10px;
+}
+
+#online-container{
+	display: flex;
+	flex-direction: row;
+}
+
+#num-online:hover #online{
+  visibility: visible;
+}
+
+#num-online{
+	display: flex;
+	flex-direction: row;
+	cursor: pointer;
+}
+
+#admin_container{
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	text-align: center;
+}
+
+.new{
+		-webkit-animation: bounce-top 0.9s both;
+		        animation: bounce-top 0.9s both;
+
+}
+
+.btn:hover
+{
+        -webkit-transform: scale(1.3);
+        -ms-transform: scale(1.3);
+        transform: scale(1.3);
+}
+
+//Import the animations.less file
+@import "animations.less";

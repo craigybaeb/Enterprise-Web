@@ -39,7 +39,7 @@ class MessageTasks {
                           }
 
        //Send the message
-       res.status(200).send({username:req.session.username, messages: noMessages});
+       res.status(200).send({username:req.session.username, messages: [noMessages]});
 
       }else{ //Messages are saved for this room
          //Send success message with messages

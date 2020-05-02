@@ -98,12 +98,18 @@ class TaskDao {
    //Get the item to delete from the database
    const doc = await this.find(querySpec) //Execute the query
 
-   //Delete the fetched item
-   const { resource: failed } = await this.container
-     .item(doc[0].id, querySpec.parameters[0].value) //PartitionKey is extracted from querySpec
-     .delete(); //Delete the item
+   //Check if item exists
+   if(doc.length){ //Item exists
 
-   return !failed; //Informs controller of success/failure of operation
+     //Delete the fetched item
+     const { resource: failed } = await this.container
+       .item(doc[0].id, querySpec.parameters[0].value) //PartitionKey is extracted from querySpec
+       .delete(); //Delete the item
+
+     return !failed; //Informs controller of success/failure of operation
+ }else{ //Item does not exist
+   return false; //Cannot be deleted
+ }
  } //End deleteItem()
 } //End TaskDao
 

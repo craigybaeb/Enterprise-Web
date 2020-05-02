@@ -1,13 +1,159 @@
 $(document).ready(() =>{
-  var socket = io.connect();
-  // submit text message without reload/refresh the page
+
+/* On-click Handlers Start */
+
+  //'Leave' button is clicked
+  $('#leave').click(() => socket.emit('left'));
+
+  //'Join' button  is clicked
+  $('#join-btn').click(() =>{
+    const room = $('#join-input').val(); //Get room from input
+
+    $.get(`/room/${room}`) //Request to join the room
+
+    //Success
+    .done((data) =>{
+      $('#msg').html(`Joining ${room}...`); //Display event message on screen
+      window.location.replace(`/room/${room}`); //Redirect browser to room
+    })
+
+    //Failure
+    .fail((data) =>{
+        $('#msg').append(data.responseJSON.msg);
+    })
+
+  }); //End of join-btn() click handler
+
+  //'Send' button is clicked
   $('#send').click(() =>{
-      const message = $('#chatbox').val();
-      if(message != ""){
-      socket.emit('chat_message', message);
-      $('#chatbox').val('');
+    //Get message from input box
+    const message = $('#chatbox').val();
+
+    //Check if field is empty
+    if(message != ""){
+      socket.emit('chat_message', message); //Broadcast message to server
+      $('#chatbox').val(''); //Reset input box
     }
   });
+
+  //'Login' button is clicked
+  $('#login-btn').click(() => doLogin()); //Attempt login
+
+  //'Logout' button is clicked
+  $('#logout').click(() => $.get('/logout', () => { //Tell the server to log the user out
+        window.location.replace("/login"); //Redirect the browser to the login page
+  }));
+
+  //'Add Room' button is clicked
+  $('#add-btn').click(() =>{
+
+      //Send the room to the server to be added
+      $.post('/room', {
+        room : $('#addinput').val()}) //Name of the room to be sent
+
+        //Success
+        .done((data) =>{
+          $('#msg').html(data.msg); //Display the servers response
+        })
+
+        //Failure
+        .fail((data) =>{
+          $('#msg').empty();
+          data.responseJSON.msg.forEach((msg)=>{
+            $('#msg').append(msg + "<br><br>");
+          })
+        })
+
+  });
+
+  //'Change Privileges' button is clicked
+  $('#priv-btn').click(() =>{
+
+      //Get data from inputs
+      const username = $('#priv-user-input').val(); //Username to alter privileges
+      const privilege = $('#priv-input').val(); //Admin level
+
+      //Send AJAX PUT request to server to change a user's privileges
+      $.ajax({
+        url: '/user/' + escape(username), //Escape the username to work as URL (Example: '/user/Craig%20Pirie')
+        type: 'PUT', //PUT is representative of the UPDATE operation
+        data : { priv: privilege }, //Data to be sent in body of HTTP request
+        success: (result) => {
+          //Display message on success
+          $('#msg').html(result.msg)
+        }, //End success callback
+        error: (xhr) =>{
+          //Display errors
+          $('#msg').empty(); //Clear the errors
+
+          //Loop for each error message recieved
+          xhr.responseJSON.msg.forEach((msg) =>{
+            $('#msg').append(msg);
+          });
+        } //End error callback
+      }); //End request
+    }); //End on-click handler
+
+    //'Delete' button is clicked
+    $('#delete-btn').click(() =>{
+        //Get room from input
+        const room = $('#delete-input').val();
+
+        //Send AJAX DELETE request
+        $.ajax({
+          url: `/room/${room}`, //Example: '/room/Enterprise%20Web'
+          type: 'DELETE', //Request type matches semantically with operation
+          success: (result) => { //Result recieved from server
+            //Display success message
+            $('#msg').html(result.msg)
+            $(`#delete-input option[value='${room}']`).remove();
+          }, //End success message
+          error: (xhr) =>{
+            //Display errors
+            $('#msg').empty(); //Clear the errors
+
+            //Loop for each error message recieved
+            xhr.responseJSON.msg.forEach((msg) =>{
+              $('#msg').append(msg);
+            });
+          } //End error callback
+        }); //End request
+      }); //End on-click handler
+
+      //'Register' button is clicked
+      $('#register-btn').click(() => doRegister());
+
+      /* Mousedown Handlers */
+        //Reveal password while mouse is held down
+        $('#show').mousedown(() => $('#password').attr('type', 'text')); //Change input type to text
+
+        //Reveal confirm-password while mouse is held down
+        $('#show-confirm').mousedown(() => $('#confirm').attr('type', 'text')); //Change input type to text
+      /* Mousedown End */
+
+      /* Mouseup Handlers */
+        //Hide password when mouse is released
+        $('#show').mouseup(() => $('#password').attr('type', 'password')); //Change input type to password
+
+        //Hide confirm-password when mouse is released
+        $('#show-confirm').mouseup(() => $('#confirm').attr('type', 'password')); //Change input type to password
+      /* Mouseup Handlers End */
+
+      /* Keyup handlers */
+        $('#chatbox').keyup((event) => {
+          if(event.keyCode === 13){
+            event.preventDefault();
+            $('#send').click();
+          };
+        });
+      /* Keyup handlers End*/
+
+/* On-Click Handlers End */
+
+
+/* Socket.io functions */
+  //Connect to socket.io
+  var socket = io.connect();
   // append the chat text message
   socket.on('chat_message', (msg) => {
     if(msg.sender==msg.username){
@@ -47,19 +193,6 @@ $(document).ready(() =>{
 
   });
 
-  socket.on('whos_online', (users) => {
-    users.forEach((user) =>{
-      $('#users').append($('<li>').html(user));
-    })
-
-
-  });
-
-
-$('#leave').click(() =>{
-socket.emit('left', "Enterprise Web");
-
-})
   joinRoom = () => {
     $.post("/savedMessages", {
       room: "Enterprise Web"
@@ -84,143 +217,64 @@ socket.emit('left', "Enterprise Web");
 
 
     }
-    $('#join-btn').click(() =>{
-      const room = $('#join-input').val()
-      //$('#jform').attr('action', '/chat/'+room);
-      //$('#jform').submit()
-      window.location.replace(`/room/${room}`)
 
-      $('#msg').html("Joining room...")
-    })
+    const doRegister = () => {
+      const username = $('#username').val();
+      const password = $('#password').val();
+      const confirm = $('#confirm').val();
 
-  $('.room').each(() =>{
-    var thisroom = $(this).html();
-    $(this).click(() =>{
-      joinRoom(thisroom);
-    })
-  })
+      //let msg = ""
+      //msg = checkReg(username,password, confirm);
 
-
-
-$('#login-btn').click(() =>{
-    $.ajax('/login', {
-   type: "POST",
-   data: {
-     username : $('#username').val(),
-     password : $('#password').val()
-   },
-   statusCode: {
-      200: (data) => {
-        $('#msg').html(data.msg)
-        if(data.match){
-          window.location.replace("/")
-        }
-      },
-      429: (response) => {
-        $('#msg').html(response.responseText);
-            }
-   }
- });
-});
-
-
- checkReg = (username, pword, confirm) => {
-  if(pword != confirm){
-    return "Passwords do not match!";
-  }
-
-  if(username == "" || pword == "" || confirm == ""){
-    return "Please complete all fields before submitting!"
-  }
-  return ""
-}
-  $('#register-btn').click(() =>{
-    const username = $('#username').val();
-    const password = $('#password').val();
-    const confirm = $('#confirm').val();
-
-    let msg = ""
-    msg = checkReg(username,password, confirm);
-    if(msg==""){
-      $.post('/user', {
-        username : username,
-        password: password
-      }, (data) => {
-        $('#msg').html(data.msg)
-        if(data.errors){
-            $('#msg').html(data.errors[0].msg);
-        }
-
-      });
-    }else {
-      window.location.replace("/")
-      $('#msg').html(msg)
-
-    }
-    })
-
-
-    $('#show').mousedown(() =>{
-      $('#password').attr('type', 'text')
-    })
-
-    $('#show').mouseup(() =>{
-      $('#password').attr('type', 'password')
-    })
-
-    $('#show-confirm').mousedown(() =>{
-      $('#confirm').attr('type', 'text')
-    })
-
-    $('#show-confirm').mouseup(() =>{
-      $('#confirm').attr('type', 'password')
-    })
-    $('#add-btn').click(() =>{
-        $.post('/room', {
-          room : $('#addinput').val()
-        }, (data) => {
-          $('#msg').html(data.msg)
-        });
-      });
-
-      $('#delete-btn').click(() =>{
-          const room = $('#delete-input').val();
-
-          $.ajax({
-            url: `/room/${room}`,
-            type: 'DELETE',
-            success: (result) => {
-              $('#msg').html(result.msg)
-            }
-          });
-        });
-
-        $('#priv-btn').click(() =>{
-          $.ajax({
-            url: '/user/' + escape($('#priv-user-input').val()),
-            type: 'PUT',
-            data : { priv:$('#priv-input').val() },
-            success: (result) => {
-              $('#msg').html(result.msg)
-            }
-          });
-
-          });
-
-      $('#logout').click(() => {
-        $.get('/logout', () => {
-            window.location.replace("/login")
-        })
-
-        });
-
-        $('#change').click(() => {
-          $.post('/logout', () => {
-              window.location.replace("/login")
-
+        $.post('/user', {
+          username : username,
+          password: password,
+          confirm: confirm })
+          .done((msg) => {
+            $('#msg').html(msg.msg);
+            window.location.replace("/")
+          })
+          .fail((data) => {
+            $('#msg').empty(); //Clear the errors
+            data.responseJSON.msg.forEach((msg)=>{
+              $('#msg').append(msg + "<br><br>");
+            })
           })
 
-          });
+
+
+
+    }
+
+          const doLogin = () => {
+            $.ajax('/login', {
+           type: "POST",
+           data: {
+             username : $('#username').val(),
+             password : $('#password').val()
+           },
+           statusCode: {
+              200: (data) => {
+                $('#msg').html(data.msg)
+                if(data.match){
+                  window.location.replace("/")
+                }
+              },
+              429: (response) => {
+                $('#msg').html(response.responseText);
+              },
+              401: (response) => {
+                $('#msg').empty(); //Clear the errors
+                response.responseJSON.msg.forEach((msg)=>{
+                  $('#msg').append(msg + "<br><br>");
+                })
+              },
+              404: (response) => {
+                $('#msg').html(response.responseJSON.msg)
+              },
+           }
+         });
+          }
 
 
 })

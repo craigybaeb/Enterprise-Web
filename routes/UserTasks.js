@@ -32,13 +32,13 @@ class UserTasks {
 
      //Check if update was success
      if(updated){ //Success
-       res.status(200).send({msg: "Updated"});
+       res.status(200).send({msg: `Admin privileges for ${req.params.username} updated!`});
      }else{ //User is not found
-       res.status(404).send({msg: "User not found! Please try again."});
+       res.status(404).send({msg: ["User not found! Please try again."]});
      }
    }catch{
      //Update failed due to server error
-     res.status(500).send({msg: "Uh oh! An unexpected server error has occured."});
+     res.status(500).send({msg: ["Uh oh! An unexpected server error has occured."]});
    }//End try/catch
  }//End changePrivileges()
 
@@ -74,7 +74,7 @@ class UserTasks {
          req.session.priv = user.priv; //Level of administrative control
 
          //Send success message
-         res.status(200).send({match: true, msg:"Login success!"});
+         res.status(200).send({match: true, msg:`Welcome back ${username}!`});
 
        }else{ //Passwords do not match
          //Send error message
@@ -130,12 +130,12 @@ class UserTasks {
 
      }else{ //User already exists
        //Send error message
-       res.status(409).send({msg:"Sorry, an account with this username already exists! Please choose another username and try again."});
+       res.status(409).send({msg:["Sorry, an account with this username already exists! Please choose another username and try again."]});
      }
 
    }catch{ //Server failed
      //Send error message
-     res.status(500).send({msg:"Uh oh! An unexpected server error has occured."});
+     res.status(500).send({msg:["Uh oh! An unexpected server error has occured."]});
    }//End try/catch
  }//End register()
 

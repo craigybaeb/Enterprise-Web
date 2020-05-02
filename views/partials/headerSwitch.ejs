@@ -1,16 +1,16 @@
 <% switch (privilege) {
 case "1" : %>
-      <%- include('../partials/header', {title: "Join Room", links: [{"/" : "Join Room"},
+      <%- include('../partials/responsiveHeader2', {links: [{"/" : "Join Room"},
                                                                      {"/logout" : "Logout"}]}) %>
       <% break;
 
 case "2" :
 case "3" : %>
-<%- include('../partials/header', {title: "Join Room", links: [{"/" : "Join Room"},
+      <%- include('../partials/responsiveHeader2', {links: [{"/" : "Join Room"},
                                                             {"/admin" : "Admin Portal"},
                                                             {"/logout" : "Logout"}]}) %>
       <% break;
 default : %>
-<%- include('../partials/header', {title: "Join Room", links: [{"/register" : "Register"},
-                                                               {"/login" : "Login"}]}) %>
+      <%- include('../partials/responsiveHeader2', {links: [{"/login" : "Login"},
+                                                            {"/register" : "Register"}]}) %>
       <% break;} %>

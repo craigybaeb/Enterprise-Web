@@ -1,0 +1,12 @@
+
+<header class="header">
+  <a href="/" class="logo"><img src="/images/icon.png"> LectureChat</a>
+  <input class="menu-btn" type="checkbox" id="menu-btn" />
+  <label class="menu-icon" for="menu-btn"><span class="navicon"></span></label>
+  <ul class="menu">
+    <li><a href="/about">About</a></li>
+    <% links.forEach((link) => { %>
+      <li><a href="<%= Object.keys(link) %>"><%= Object.values(link) %></a></li>
+    <% }) %>
+  </ul>
+</header>

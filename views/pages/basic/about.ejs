@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<%- include('../../partials/head', {title: "About"}) %>
+<body>
+<%- include('../../partials/headerSwitch') %>
+
+<div class="about_main">
+  <div class="about_box">
+  	<div class="question">What is LectureChat?</div>
+  	<div class="answer">LectureChat is a instant messaging application that links you with fellow students, so you can discuss, exchange notes, see who else is online in a lecture and message them.</div>
+  </div>
+
+
+
+	<div class="about_box2">
+		<div class="about_box">
+		<div class="question">How do you use LectureChat?</div>
+		<div id="how"class="answer">Using LectureChat is easy! All you need to do is login (or register if you haven't already), then join a lecture to start chatting to your friends. To send a message, simply type a message in the box and press send.</div>
+	</div>
+</div>
+
+	<div class="about_box">
+		<div class="question">I am an admin user, what additional features are available to me?</div>
+		<div class="answer">Admin users have the ability to create new lecture rooms, delete old ones and to change the admin privileges of other users.</div>
+	</div>
+
+  <div class="about_box2">
+		<div class="about_box">
+		<div class="question">How was LectureChat developed?</div>
+		<div id="how"class="answer">LectureChat was developed using a special version of the MEEN stack. However, where MEEN typically uses MongoDB, Express.js, EJS and Node.js was used together, LectureChat uses Microsoft Azure's CosmosDB with the MongoDB API. <br><br>
+      It was developed using a MVC, 3-tier arcitecture and is hosted on a Microsoft Azure Web App to maximise scalability and availability, while making it easy to implement redundancy. <br><br>
+      Supporting technologies include HTML, CSS and the LESS preprocessor, JavaScript and jQuery. <br><br>
+      GitHub was used for version control, and it can be cloned at this <a href="https://github.com/craigybaeb/Enterprise-Web.git">repository.</a></div>
+	</div>
+  </div>
+
+  <div class="about_box">
+		<div class="question">Is LectureChat secure?</div>
+		<div class="answer">Yes! Steps have been taken to reduce the security vulnerabilities in the application. Defences have been implemented to protect against XSS, SQL Injection, Brute Force, Man in the Middle Attacks, Sensitive Data Exposure, Denial of Service attacks and more!</div>
+	</div>
+
+  <div class="about_box2">
+		<div class="about_box">
+		<div class="question">Will it work on mobile?</div>
+		<div id="how"class="answer">Yes! LectureChat is designed to be responsive, meaning that it will adjust the display to fit to your device's screen. Try it out by resizing the browser window!</div>
+	</div>
+  </div>
+
+</div>
+</body>
+</html>

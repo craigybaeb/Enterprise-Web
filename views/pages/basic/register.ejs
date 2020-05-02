@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<%- include('../../partials/head.ejs', {title: "Register"}) %>
+<body>
+<%- include('../../partials/headerSwitch') %>
+
+
+<div class=main_join>
+<div class="join_box">
+<div class="jbox">
+	<p>Register</p>
+	<div id="join_container">
+		<form id="reg-form">
+		<label>Username: </label><input autofocus="on" id="username" maxlength="15">
+		<div class="password-container"><label>Password: </label><input type="password" id="password" maxlength="10"><img src="images/show-password.svg" id="show"></div>
+		<div class="password-container"><label>Confirm Password: </label><input type="password" id="confirm" maxlength="10">	<img src="images/show-password.svg" id="show-confirm"></div>
+	</form>
+		<br>
+	<div id="register-btn" class="btn">Register</div>
+	<p id="msg"></p>
+	<p>Already have an account? <a href="/login">Login</a> here.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+</body>
+</html>

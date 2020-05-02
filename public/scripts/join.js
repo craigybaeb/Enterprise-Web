@@ -50,10 +50,7 @@ $(document).ready(function(){
     scroll();
 
   });
-  // append text if someone is online
-  socket.on('is_online', function(username) {
-      $('#messages').append($('<li>').html(username));
-  });
+
 
   // append text if someone is online
   socket.on('typing', function(username) {
@@ -93,7 +90,7 @@ $(document).ready(function(){
 
   socket.on('online', function(num, users) {
     $('#online').empty();
-    $('#num').html(num);
+    $('#num').html(`Online: ${num}`);
     users.forEach(function(user){
       $('#online').append($('<p>').text(user));
     })
@@ -283,5 +280,12 @@ function timeoutFunction(){
   socket.emit('stopped_typing');
 }
 
-
+/* Keyup handlers */
+  $('#chatbox').keyup((event) => {
+    if(event.keyCode === 13){
+      event.preventDefault();
+      $('#send').click();
+    };
+  });
+/* Keyup handlers End*/
 })

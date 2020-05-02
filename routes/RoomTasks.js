@@ -33,16 +33,16 @@ class RoomTasks {
      //Check if room was deleted succesfully
      if(deleted){ //Delete success
        //Send success message
-       res.status(200).send({msg:"Success"});
+       res.status(200).send({msg:`Successfully deleted ${req.params.room}!`});
      }else{ //Failed to delete
        //Send error message
-       res.status(404).send({msg:"Uh oh! A room with this name was not found or does not exist. please try again or try a different room."});
+       res.status(404).send({msg:["Uh oh! A room with this name was not found or does not exist. Please try again."]});
      }
 
    }catch(err){ //Server failed
      //Send error message
      console.log(err)
-     res.status(500).send({msg:"Uh oh! An unexpected server error has occured."});
+     res.status(500).send({msg:["Uh oh! An unexpected server error has occured."]});
    } //End try/catch
 
  } //End deleteRoom()
@@ -69,7 +69,7 @@ class RoomTasks {
      //Check if room was added successfully
      if (added) { //Succesfully created room
        //Send success message
-       res.status(201).send({msg:"Room added!"});
+       res.status(201).send({msg:`${req.body.room} added to rooms!`});
      }else{ //Room with name already existed
        //Send error message
        res.status(409).send({msg:"Sorry, a room with this name already exists! Please choose another name and try again."});
@@ -91,7 +91,7 @@ class RoomTasks {
      const items = await this.taskDao.find(querySpec); //Fetch the rooms from the database using the model
 
      //Send the rooms to the client and render the 'Delete' page
-     res.render('pages/delete', {privilege: req.session.priv, rooms:items});
+     res.render('pages/admin/delete', {privilege: req.session.priv, rooms:items});
 
    }catch{ //Server failed
      //Send error message
@@ -100,7 +100,7 @@ class RoomTasks {
  } //End deletePage()
 
  //Get list of rooms for 'Join Room' page
- async joinRoom(req,res){
+ async getRooms(req,res){
 
    //Attempt to get rooms
    try{
@@ -108,13 +108,46 @@ class RoomTasks {
      const rooms = await this.taskDao.find(querySpec); //Fetch the rooms from the database using the model
 
      //Send the rooms to the client and render the 'Join Room' page
-     res.render('pages/join', {privilege: req.session.priv, rooms:rooms});
+     res.render('pages/basic/join', {privilege: req.session.priv, rooms:rooms});
 
    }catch{ //Server failed
      //Send error message
      res.status(500).send({msg:"Uh oh! An unexpected server error has occured."});
    } // End try/catch
  } //End joinRoom()
+
+ async joinRoom(req,res){
+   //Attempt to get rooms
+   try{
+
+     //Build SQL query for the DAO
+     const querySpec = {
+       query: "SELECT * FROM root r WHERE r.room=@room", //Will check to see if the room exists in the "Room" container
+       parameters: [
+         {
+           name: "@room", //Parameterisation prevents SQLi
+           value: req.params.room //Get the room to join from the client request
+         }
+       ]
+     };
+
+     const rooms = await this.taskDao.find(querySpec); //Fetch the room from the database using the model
+
+     //Check if the room exists
+     if(rooms.length){ //Room exists
+       req.session.room = req.params.room; //Set room in session
+       res.render('pages/basic/main', {privilege: req.session.priv, room:req.params.room}); //Take the user to the room
+
+     }else{ //Room does not exist
+       res.status(404).send({msg:"Uh oh! The requested room was not found. Please try again."}); //Display error
+     }
+
+
+   }catch{ //Server failed
+     //Send error message
+     res.status(500).send({msg:"Uh oh! An unexpected server error has occured."});
+   } // End try/catch
+ }
 } //End RoomTasks
 
  module.exports = RoomTasks; //Export RoomTasks for use by the server
