@@ -49,8 +49,8 @@ const validateRoom = (req,res,next) =>{
   }
 
   //Check if the room name is correct length
-  if(!validator.isLength(room, {min: 4, max:15})){
-    msg.push("Room name is incorrect length! Please enter a name between 4-15 characters long and try again.");
+  if(!validator.isLength(room, {min: 4, max:25})){
+    msg.push("Room name is incorrect length! Please enter a name between 4-25 characters long and try again.");
   }
 
   //Check if the form passed validation
