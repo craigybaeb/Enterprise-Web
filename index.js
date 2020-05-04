@@ -90,5 +90,9 @@ app.post('/login', loginLimiter, (req, res, next) => userTasks.login(req,res)); 
 app.post('/room', isLoggedIn, isAdmin, validate.room, (req, res, next) => roomTasks.addRoom(req,res)); //Add new room
 app.post('/user', validate.register, (req, res, next) => userTasks.register(req,res)); //Register account
 
+
+//404 Not Found
+app.get('*', (req, res) => { res.status(404).redirect('/')});
+
 //Start the server
 server.listen(8080, () => {console.log('listening on *:8080')}); //Browse to 'localhost:8080' in browser to view page once run using "npm start"
