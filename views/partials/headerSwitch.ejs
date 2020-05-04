@@ -15,6 +15,6 @@
         <% break;
   // Default to non-admin for security
   default : %>
-        <%- include('../partials/header', {links: [{"/" : "Join Room"},
-                                                   {"/logout" : "Join Room"}]}) %>
+        <%- include('../partials/header', {links: [{"/login" : "Login"},
+                                                    {"/register" : "Register"}]}) %>
       <% break;} %>
