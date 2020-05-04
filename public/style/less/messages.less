@@ -1,0 +1,71 @@
+/* Styles affecting messages */
+
+.message-mixin {
+  max-width: 40vw;
+  border-radius: 10px;
+  padding: 10px;
+  word-break: break-all;
+  hyphens: auto;
+}
+
+.sender {
+  min-width: 20vw;
+  padding-left: 10px;
+}
+.message_box > div {
+  text-align: left;
+}
+
+.message_box {
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  padding: 5px 15px;
+}
+
+.message {
+  max-width: 40vw;
+  border-radius: 10px;
+  padding: 10px;
+  word-break: break-all;
+  hyphens: auto;
+  background-color: #d3d3d3;
+}
+.my_message {
+  max-width: 40vw;
+  border-radius: 10px;
+  padding: 10px;
+  word-break: break-all;
+  hyphens: auto;
+  background-color: purple;
+  color: white;
+}
+.join_message, .typing_message {
+  max-width: 40vw;
+  border-radius: 10px;
+  padding: 10px;
+  word-break: break-all;
+  hyphens: auto;
+  background-color: #0053a0;
+  color: white;
+}
+.main.typing_message {
+  position: absolute;
+}
+.my {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+.recieved {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+.new {
+  -webkit-animation: bounce-top 0.9s both;
+  animation: bounce-top 0.9s both;
+}
+
+/* Styles affecting messages end */

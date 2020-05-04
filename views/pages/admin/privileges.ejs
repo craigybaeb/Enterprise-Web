@@ -1,0 +1,41 @@
+<!-- Page to edit user privileges -->
+<html>
+	<!-- Configure the head -->
+	<%- include('../../partials/head.ejs', {title: "Edit User Privileges"}) %>
+	<body>
+	<!-- Get the navigation bar -->
+	<%- include('../../partials/headerSwitch') %>
+
+		<!-- Main content -->
+		<main class=main_join>
+			<div class="join_box">
+				<div class="jbox">
+					<!-- Heading -->
+					<p>Edit user privileges</p>
+					<div id="join_container">
+
+						<!-- Form to alter user admin rights -->
+						<form>
+							<!-- Username to update, and admin level to amend to -->
+							<label>Username:</label><input placeholder="Type the username of a user here..." autofocus="on" id="priv-user-input" class="input" maxlength="15"><br>
+    					<label>User Level:</label><select id="priv-input" class="input">
+																		      <option value="1">1</option>
+																		      <option value="2">2</option>
+																		      <option value="3">3</option>
+    																		</select>
+
+							<!-- Buttons -->
+							<div class="admin-button-container">
+								<a href="/admin"><div class="btn">Back</div><a/>
+								<div id="priv-btn" class="btn admin-control-btn">Edit</div>
+							</div>
+						</form>
+
+						<!-- Display server response message -->
+  					<p id="msg"></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+</html>

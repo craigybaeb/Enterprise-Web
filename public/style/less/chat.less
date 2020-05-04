@@ -1,0 +1,52 @@
+/* Styles affecting main chat room page */
+
+#online {
+  display: none;
+  z-index: 5;
+  background-color: #f4f4f4;
+  padding: 5px 0;
+  position: relative;
+  text-align: center;
+}
+#online-container {
+  display: flex;
+  flex-direction: row;
+}
+#num-online:hover #online {
+  display: block;
+}
+#num-online {
+  cursor: pointer;
+}
+
+.chatbox_container > div {
+  min-width: 10vw;
+}
+
+.chatbox_container{
+  position: fixed;
+  bottom: 0;
+}
+#chatbox {
+  min-width: 90vw;
+  height: 5vh;
+  font-size: 18px;
+}
+
+#send {
+  background-color: purple;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  cursor: pointer;
+}
+
+.main {
+  height: 82vh;
+  overflow-y: scroll;
+  position: relative;
+  margin-top: 70px;
+}
+
+/* Styles affecting main chat room page */

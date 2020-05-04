@@ -3,9 +3,9 @@
 //Import the modules
 const express = require('express');
 const RateLimit = require('express-rate-limit');
-const validate = require("./routes/validate");
-const { isLoggedIn, isMaster, isAdmin } = require("./routes/access");
-const {roomTasks, messageTasks, userTasks} = require("./routes/loadModels");
+const validate = require("./controllers/validate");
+const { isLoggedIn, isMaster, isAdmin } = require("./controllers/access");
+const {roomTasks, messageTasks, userTasks} = require("./controllers/loadModels");
 const helmet = require('helmet');
 
 //Configures sessions for the server
@@ -57,7 +57,7 @@ app.enable('trust proxy');
 
 //Setup socket.io
 const server = require('http').Server(app);
-require('./routes/socket-io')(session, server);
+require('./controllers/socket-io')(session, server);
 
 //Handle 'GET' requests
 app.get('/', isLoggedIn, (req,res) => roomTasks.getRooms(req,res));
