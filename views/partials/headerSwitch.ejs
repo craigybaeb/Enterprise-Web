@@ -1,16 +1,20 @@
+<%# Checks the user level and displays the correct header accordingly %>
 <% switch (privilege) {
-case "1" : %>
-      <%- include('../partials/responsiveHeader2', {links: [{"/" : "Join Room"},
-                                                                     {"/logout" : "Logout"}]}) %>
-      <% break;
+  // User is not admin
+  case "1" : %>
+        <%- include('../partials/header', {links: [{"/" : "Join Room"},
+                                                   {"/logout" : "Logout"}]}) %>
+        <% break;
 
-case "2" :
-case "3" : %>
-      <%- include('../partials/responsiveHeader2', {links: [{"/" : "Join Room"},
-                                                            {"/admin" : "Admin Portal"},
-                                                            {"/logout" : "Logout"}]}) %>
-      <% break;
-default : %>
-      <%- include('../partials/responsiveHeader2', {links: [{"/login" : "Login"},
-                                                            {"/register" : "Register"}]}) %>
+  // User is admin
+  case "2" :
+  case "3" : %>
+        <%- include('../partials/header', {links: [{"/" : "Join Room"},
+                                                              {"/admin" : "Admin Portal"},
+                                                              {"/logout" : "Logout"}]}) %>
+        <% break;
+  // Default to non-admin for security
+  default : %>
+        <%- include('../partials/header', {links: [{"/login" : "Logout"},
+                                                              {"/register" : "Register"}]}) %>
       <% break;} %>

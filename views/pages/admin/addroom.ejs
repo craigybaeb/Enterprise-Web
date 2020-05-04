@@ -1,25 +1,38 @@
-<!DOCTYPE html>
+<!-- Page to add a room to the database -->
 <html>
+  <!-- Configure head -->
   <%- include('../../partials/head.ejs', {title: "Add Room"}) %>
   <body>
+      <!-- Get the header -->
       <%- include('../../partials/headerSwitch') %>
 
+      <!-- Main content -->
       <main class=main_join>
         <div class="join_box">
           <div class="jbox">
+            <!-- Heading -->
 	           <p>Add a room</p>
 	           <div id="join_container">
+
+               <!-- Form to add room -->
                <form>
-		             <input placeholder="Type the name of a room to add here..." id="addinput" autofocus="on" maxlength="25">
+                 <!-- Textbox to name new room -->
+		             <input placeholder="Type the name of a room to add here..." id="addinput" class="input" autofocus="on" maxlength="25">
+
+                 <!-- Buttons -->
                  <div class="admin-button-container">
              		    <a href="/admin"><div class="btn">Back</div><a/>
                     <div id="add-btn" class="btn admin-control-btn">Add</div>
                  </div>
+
                </form>
-                 <p id="msg"></p>
-               </div>
+
+               <!-- Server response message -->
+               <p id="msg"></p>
+
              </div>
            </div>
-         </main>
-       </body>
+         </div>
+       </main>
+     </body>
 </html>

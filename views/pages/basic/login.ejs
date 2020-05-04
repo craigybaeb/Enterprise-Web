@@ -1,33 +1,43 @@
-<!DOCTYPE html>
+<!-- Login page -->
 <html>
+	<!-- Configure the head -->
+	<%- include('../../partials/head.ejs', {title: "Login"}) %>
+	<body>
+		<!-- Get the navigation bar -->
+		<%- include('../../partials/headerSwitch') %>
 
-<%- include('../../partials/head.ejs', {title: "Login"}) %>
+			<!-- Main content -->
+			<main class=main_join>
+				<div class="join_box">
+					<div class="jbox">
+						<!-- Heading -->
+						<p>Login</p>
+						<div id="join_container">
 
-<body>
+							<!-- Login form -->
+							<form>
+								<!-- Username & Password fields -->
+								<label>Username: </label><input autofocus="on" id="username" class="input" maxlength="15">
+								<div class="password-container"><label>Password: </label><input type="password" class="input" id="password" maxlength="12">
 
-<%- include('../../partials/headerSwitch') %>
+									<!-- Reveal password when clicked -->
+									<img src="images/show-password.svg" id="show">
+								</div>
+								<br>
+							</form>
 
-<div class=main_join>
-<div class="join_box">
-<div class="jbox">
-	<p>Login</p>
-	<div id="join_container">
-		<form>
-		<label>Username: </label><input autofocus="on" id="username" maxlength="15">
-		<div class="password-container"><label>Password: </label><input type="password" id="password" maxlength="12"></form>
-				<img src="images/show-password.svg" id="show">
+							<!-- Login button -->
+							<div id="login-btn" class="btn">Login</div>
+
+							<!-- Server response message -->
+							<p id="msg"></p>
+
+							<!-- Navigate to register if no account -->
+							<p>Don't have an account? <a href="/register">Register</a>  here. </p>
+
+					</div>
+				</div>
 			</div>
-			<br>
-	<div id="login-btn" class="btn">Login</div>
-
-
-	<p id="msg"></p>
-	<p>Don't have an account? <a href="/register">Register</a>  here. </p>
-
-</div>
-</div>
-</div>
-</div>
-
-</body>
+		</main>
+	</body>
 </html>

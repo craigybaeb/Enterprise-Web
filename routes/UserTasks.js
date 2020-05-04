@@ -74,19 +74,19 @@ class UserTasks {
          req.session.priv = user.priv; //Level of administrative control
 
          //Send success message
-         res.status(200).send({match: true, msg:`Welcome back ${username}!`});
+         res.status(200).send({msg:`Welcome back ${username}!`});
 
        }else{ //Passwords do not match
          //Send error message
-         res.status(401).send({match: false, msg:"Username and password don't match!"});
+         res.status(401).send({msg:"Username and password don't match!"});
        }
      }else{ //Account with this username not found
        //Send error message
-       res.status(404).send({match: false, msg:"Username and password don't match!"});
+       res.status(404).send({msg:"Username and password don't match!"});
      }
    }catch{ //Server failed
      //Send error message
-     res.status(500).send({match: false, msg:"Uh oh! An unexpected server error has occured."});
+     res.status(500).send({msg:"Uh oh! An unexpected server error has occured."});
    }//End try/catch
  }//End login()
 

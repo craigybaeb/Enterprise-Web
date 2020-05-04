@@ -71,7 +71,7 @@ app.get('/room/:room', isLoggedIn, (req, res) => roomTasks.joinRoom(req,res)); /
 app.get('/admin', isLoggedIn, isAdmin, (req,res) => {res.render('pages/admin/admin', {privilege: req.session.priv})}); //Get the admin page
 app.get('/admin/room/add', isLoggedIn, isAdmin, (req, res) => {res.render('pages/admin/addroom', {privilege: req.session.priv})}); //Add room page
 app.get('/admin/room/delete', isLoggedIn, isAdmin, (req, res) => roomTasks.deletePage(req,res)); //Delete room page
-app.get('/admin/privileges', isLoggedIn, isMaster, (req, res) => {res.render('pages/admin/escalate', {privilege: req.session.priv})}) //Edit user privileges page
+app.get('/admin/privileges', isLoggedIn, isMaster, (req, res) => {res.render('pages/admin/privileges', {privilege: req.session.priv})}) //Edit user privileges page
 
 //Logout
 app.get('/logout', (req, res) => {

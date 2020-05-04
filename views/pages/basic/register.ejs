@@ -1,29 +1,40 @@
-<!DOCTYPE html>
+<!-- Register page -->
 <html>
-<%- include('../../partials/head.ejs', {title: "Register"}) %>
-<body>
-<%- include('../../partials/headerSwitch') %>
+	<!-- Configure the head -->
+	<%- include('../../partials/head.ejs', {title: "Register"}) %>
+	<body>
+		<!-- Get the navigation bar -->
+		<%- include('../../partials/headerSwitch') %>
 
+		<!-- Main content -->
+		<main class=main_join>
+			<div class="join_box">
+				<div class="jbox">
+					<!-- Heading -->
+					<p>Register</p>
+					<div id="join_container">
 
-<div class=main_join>
-<div class="join_box">
-<div class="jbox">
-	<p>Register</p>
-	<div id="join_container">
-		<form id="reg-form">
-		<label>Username: </label><input autofocus="on" id="username" maxlength="15">
-		<div class="password-container"><label>Password: </label><input type="password" id="password" maxlength="10"><img src="images/show-password.svg" id="show"></div>
-		<div class="password-container"><label>Confirm Password: </label><input type="password" id="confirm" maxlength="10">	<img src="images/show-password.svg" id="show-confirm"></div>
-	</form>
-		<br>
-	<div id="register-btn" class="btn">Register</div>
-	<p id="msg"></p>
-	<p>Already have an account? <a href="/login">Login</a> here.</p>
+						<!-- Register form -->
+						<form id="reg-form">
+							<!-- Username, password & confirm password fields -->
+							<label>Username: </label><input autofocus="on" id="username" class="input" maxlength="15">
+							<div class="password-container"><label>Password: </label><input type="password" id="password" class="input" maxlength="10"><img src="images/show-password.svg" id="show"></div>
+							<div class="password-container"><label>Confirm Password: </label><input type="password" id="confirm" class="input" maxlength="10">	<img src="images/show-password.svg" id="show-confirm"></div>
+						</form>
+						<br>
 
-</div>
-</div>
-</div>
-</div>
+						<!-- Submit button -->
+						<div id="register-btn" class="btn">Register</div>
 
-</body>
+						<!-- Server response message -->
+						<p id="msg"></p>
+
+						<!-- Navigate to login if already have account -->
+						<p>Already have an account? <a href="/login">Login</a> here.</p>
+
+					</div>
+				</div>
+			</div>
+		</main>
+	</body>
 </html>
