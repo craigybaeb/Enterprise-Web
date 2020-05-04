@@ -41,10 +41,15 @@ $(document).ready(() =>{
           $('#msg').html(data.msg); //Display the servers response
         })
 
-        //Failure
-        .fail((data) =>{
-          $('#msg').html(data.responseJSON.msg); //Display the servers response
-        })
+        //User failed to be created
+        .fail((data) => {
+          $('#msg').empty(); //Clear the previous errors
+
+          //Print each error recieved from the server
+          data.responseJSON.msg.forEach((msg)=>{
+            $('#msg').append(msg + "<br><br>"); //Output the error
+          })
+        }) //End request
 
   });
 
