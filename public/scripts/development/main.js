@@ -96,6 +96,7 @@ $(document).ready(() => {
 
       //Insert message text into built message to avoid XSS
       $('.typing_message').last().text(`${username} is typing...`);
+      scroll(); //Scroll to bottom
   });
 
   //Handle reception of alert that someone stopped typing
